@@ -1,0 +1,482 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>service: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">jastip/application/register/service/register_service.go (67.3%)</option>
+				
+				<option value="file1">jastip/application/register/service/register_service_utility.go (53.1%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package service
+
+import (
+        "context"
+        "fmt"
+        repoRedis "jastip/application/redis/repository"
+        "jastip/application/user/repository"
+        "jastip/config"
+        "jastip/domain"
+        "jastip/internal/consts"
+        "jastip/internal/errorhandler"
+)
+
+type registerService struct {
+        repo      repository.UserContractRepository
+        repoRedis repoRedis.RedisRepositoryContract
+}
+
+func NewRegisterService(repo repository.UserContractRepository, repoRedis repoRedis.RedisRepositoryContract) *registerService <span class="cov8" title="1">{
+        return &amp;registerService{
+                repo:      repo,
+                repoRedis: repoRedis,
+        }
+}</span>
+
+func (s *registerService) Register(ctx context.Context, poolData *config.Config, data domain.User) (id int, otp string, err domain.ErrorData) <span class="cov8" title="1">{
+
+        defer PanicError()
+
+        // Validasi apakah sudah ada user dengan emal dan nomor hp yang sama
+        err = ValidateUser(poolData, s.repo, data)
+        if err.Code != 0 </span><span class="cov0" title="0">{
+                return
+        }</span>
+
+        // save ke dalam database
+        <span class="cov8" title="1">id, err = SaveUserToDatabase(poolData, s.repo, data)
+        if err.Code != 0 </span><span class="cov0" title="0">{
+                return
+        }</span>
+
+        // Generate dan Save OTP
+        <span class="cov8" title="1">otp, err = GenerateAndSaveOTP(ctx, poolData, s.repoRedis, data.Email+data.NoHP)
+        if err.Code != 0 </span><span class="cov0" title="0">{
+                return
+        }</span>
+
+        // set data attemp redis
+        <span class="cov8" title="1">block, errs := AttempRedis(ctx, poolData, s.repoRedis, consts.RedisOTP, consts.Attemp+data.Email+data.NoHP)
+        if errs.Code != 0 </span><span class="cov0" title="0">{
+                err = errs
+                return
+        }</span>
+
+        <span class="cov8" title="1">if block </span><span class="cov0" title="0">{
+                err = errorhandler.ErrBlocking()
+                return
+        }</span>
+
+        // Send Email ke user
+        <span class="cov8" title="1">go SendEmail(poolData, data.Email, data.FullName, otp)
+
+        return</span>
+}
+
+func (s *registerService) VerifyOTP(ctx context.Context, poolData *config.Config, email string, nohp string, otp string) (err domain.ErrorData) <span class="cov8" title="1">{
+        defer func() </span><span class="cov8" title="1">{
+                if r := recover(); r != nil </span><span class="cov0" title="0">{
+                        errData := fmt.Errorf(fmt.Sprintf("%s", r))
+                        err = errorhandler.ErrInsertData(errData)
+                }</span>
+
+                <span class="cov8" title="1">if err.Code == 0 </span><span class="cov8" title="1">{
+                        s.repoRedis.Delete(ctx, poolData.DBRedis[consts.RedisOTP], "Attemp_"+email+nohp)
+                }</span>
+        }()
+
+        // validasi otp apakah sama atau tidak
+        <span class="cov8" title="1">err = ValidateOtp(ctx, poolData, s.repoRedis, email+nohp, otp)
+        if err.Code != 0 </span><span class="cov0" title="0">{
+                return
+        }</span>
+
+        // update status user
+        <span class="cov8" title="1">key := []string{
+                "email", "nohp",
+        }
+        value := []any{
+                email, nohp,
+        }
+        keyUpdate := []string{
+                "status",
+        }
+        valueUpdate := []any{
+                1,
+        }
+
+        err = UpdateDataUser(poolData, s.repo, key, value, keyUpdate, valueUpdate)
+        if err.Code != 0 </span><span class="cov0" title="0">{
+                return
+        }</span>
+        <span class="cov8" title="1">return</span>
+}
+
+func (s *registerService) ResendOtp(ctx context.Context, poolData *config.Config, email string, nohp string) (otp string, err domain.ErrorData) <span class="cov8" title="1">{
+        defer PanicError()
+
+        block, errs := AttempRedis(ctx, poolData, s.repoRedis, consts.RedisOTP, consts.Attemp+email+nohp)
+        if errs.Code != 0 </span><span class="cov0" title="0">{
+                err = errs
+                return
+        }</span>
+
+        <span class="cov8" title="1">if block </span><span class="cov0" title="0">{
+                err = errorhandler.ErrBlocking()
+                return
+        }</span>
+
+        <span class="cov8" title="1">otp, err = GenerateAndSaveOTP(ctx, poolData, s.repoRedis, email+nohp)
+        if err.Code != 0 </span><span class="cov0" title="0">{
+                return
+        }</span>
+        <span class="cov8" title="1">return</span>
+}
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package service
+
+import (
+        "context"
+        "fmt"
+        repoRedis "jastip/application/redis/repository"
+        "jastip/application/user/repository"
+        "jastip/config"
+        "jastip/domain"
+        "jastip/internal/consts"
+        "jastip/internal/errorhandler"
+        "jastip/internal/general"
+        "jastip/internal/helper"
+        "log"
+        "strconv"
+        "sync"
+        "time"
+)
+
+func PanicError() (err domain.ErrorData) <span class="cov8" title="1">{
+
+        if r := recover(); r != nil </span><span class="cov0" title="0">{
+                err = errorhandler.ErrInternal(errorhandler.ErrCodePanic, fmt.Errorf(fmt.Sprintf("%s", r)))
+        }</span>
+
+        <span class="cov8" title="1">return</span>
+}
+
+func ValidateUser(poolData *config.Config, repo repository.UserContractRepository, data domain.User) (err domain.ErrorData) <span class="cov8" title="1">{
+        var wg sync.WaitGroup
+        defer PanicError()
+
+        errChan := make(chan domain.ErrorData, 2)
+        wg.Add(2)
+        go func() </span><span class="cov8" title="1">{
+                defer wg.Done()
+                errChan &lt;- CheckUserExist(poolData, repo, "email", data.Email)
+
+        }</span>()
+
+        <span class="cov8" title="1">go func() </span><span class="cov8" title="1">{
+                defer wg.Done()
+                errChan &lt;- CheckUserExist(poolData, repo, "nohp", data.NoHP)
+
+        }</span>()
+
+        <span class="cov8" title="1">wg.Wait()
+
+        close(errChan)
+        for v := range errChan </span><span class="cov8" title="1">{
+                if v.Code != 0 </span><span class="cov0" title="0">{
+                        err = v
+                        return
+                }</span>
+        }
+        <span class="cov8" title="1">return</span>
+}
+
+func CheckUserExist(poolData *config.Config, repo repository.UserContractRepository, field string, value string) (err domain.ErrorData) <span class="cov8" title="1">{
+        defer PanicError()
+        where := map[string]any{
+                field: value,
+        }
+
+        dataUser, errData := repo.Get(poolData.DBSql, where)
+        if errData != nil &amp;&amp; errData.Error() != "get users error : record not found" </span><span class="cov0" title="0">{
+                return errorhandler.ErrGetData(errData)
+
+        }</span>
+
+        <span class="cov8" title="1">if dataUser.Id != 0 </span><span class="cov0" title="0">{
+                message := fmt.Sprintf("Invalid logic on func registration : %s", "email already exist")
+                log.Println(message)
+
+                return errorhandler.ErrInvalidLogic(errorhandler.ErrCodeInvalidInput, errorhandler.ErrMsgEmailNoHPUnique, message)
+        }</span>
+
+        <span class="cov8" title="1">return</span>
+}
+
+func SaveUserToDatabase(poolData *config.Config, repo repository.UserContractRepository, data domain.User) (id int, err domain.ErrorData) <span class="cov8" title="1">{
+        defer PanicError()
+
+        id, errData := repo.Create(poolData.DBSql, data)
+        if errData != nil </span><span class="cov0" title="0">{
+                message := fmt.Sprintf("Error save data to DB on func registration and func SaveUserToDatabase : %s", errData.Error())
+                log.Println(message)
+
+                err = errorhandler.ErrInsertData(errData)
+                return
+        }</span>
+
+        <span class="cov8" title="1">return</span>
+}
+
+func GenerateAndSaveOTP(ctx context.Context, poolData *config.Config, repo repoRedis.RedisRepositoryContract, key string) (otp string, err domain.ErrorData) <span class="cov8" title="1">{
+        defer PanicError()
+        otps, errData := general.GetRandomOTP(6)
+        if errData != nil </span><span class="cov0" title="0">{
+                message := fmt.Sprintf("Error generate otp on func registration and func GenerateAndSaveOTP : %s", errData.Error())
+                log.Println(message)
+                errorhandler.ErrInternal(errorhandler.ErrCodeGenerate, fmt.Errorf(message))
+                return
+        }</span>
+
+        <span class="cov8" title="1">errData = repo.Insert(ctx, poolData.DBRedis[consts.RedisOTP], key, otps, consts.RedisOTPExp)
+        if errData != nil </span><span class="cov0" title="0">{
+                message := fmt.Sprintf("Error insert data to redis on func registration and func GenerateAndSaveOTP : %s", errData.Error())
+                log.Println(message)
+                errorhandler.ErrInsertData(fmt.Errorf(message))
+                return
+        }</span>
+        <span class="cov8" title="1">otp = otps
+        return</span>
+}
+
+func SendEmail(poolData *config.Config, email string, fullName string, otp string) <span class="cov8" title="1">{
+
+        errData := helper.SendEmailOTP(poolData, email, fullName, otp)
+        if errData != nil </span><span class="cov0" title="0">{
+                message := fmt.Sprintf("Error send email on func registration and func SendEmail : %s", errData.Error())
+                log.Println(message)
+                return
+        }</span>
+}
+
+func ValidateOtp(ctx context.Context, poolData *config.Config, repo repoRedis.RedisRepositoryContract, key string, otp string) (err domain.ErrorData) <span class="cov8" title="1">{
+        defer PanicError()
+
+        otpRedis, errData := repo.Get(ctx, poolData.DBRedis[consts.RedisOTP], key)
+        if errData != nil </span><span class="cov0" title="0">{
+                message := fmt.Sprintf("Invalid otp on func verify otp and func ValidateOtp: %s", errData.Error())
+                log.Println(message)
+
+                err = errorhandler.ErrGetData(fmt.Errorf(message))
+                return
+        }</span>
+
+        <span class="cov8" title="1">if otp != otpRedis </span><span class="cov0" title="0">{
+                message := fmt.Sprintf("Invalid otp on func verify otp and ValidateOtp : %s", "Invalid OTP")
+                log.Println(message)
+
+                err = errorhandler.ErrInvalidLogic(errorhandler.ErrCodeInvalidLogicBisnis, errorhandler.ErrMsgOTPInvalid, message)
+                return
+        }</span>
+
+        <span class="cov8" title="1">return</span>
+}
+
+func UpdateDataUser(poolData *config.Config, repo repository.UserContractRepository, key []string, value []any, keyUpdate []string, valueUpdate []any) (err domain.ErrorData) <span class="cov8" title="1">{
+        defer PanicError()
+
+        where := map[string]any{}
+        for i, v := range key </span><span class="cov8" title="1">{
+                where[v] = value[i]
+        }</span>
+
+        <span class="cov8" title="1">updates := map[string]any{}
+        for i, v := range keyUpdate </span><span class="cov8" title="1">{
+                updates[v] = valueUpdate[i]
+        }</span>
+
+        <span class="cov8" title="1">errData := repo.Update(poolData.DBSql, where, updates)
+        if errData != nil </span><span class="cov0" title="0">{
+                message := fmt.Sprintf("Failed update data on func verify otp and func UpdateDataUser : %s", errData.Error())
+                log.Println(message)
+
+                err = errorhandler.ErrInternal(errorhandler.ErrCodeUpdate, fmt.Errorf(message))
+                return
+        }</span>
+        <span class="cov8" title="1">return</span>
+}
+
+func SetAttempRedis(ctx context.Context, poolData *config.Config, repo repoRedis.RedisRepositoryContract, dbRedis string, key string) (err domain.ErrorData) <span class="cov8" title="1">{
+        defer PanicError()
+
+        errData := repo.Incr(ctx, poolData.DBRedis[dbRedis], key)
+        if errData != nil </span><span class="cov0" title="0">{
+                message := fmt.Sprintf("Failed incr data on func register and func SetAttempRedis : %s", errData.Error())
+                log.Println(message)
+
+                err = errorhandler.ErrInternal(errorhandler.ErrCodeUpdate, fmt.Errorf(message))
+                return
+        }</span>
+
+        <span class="cov8" title="1">return</span>
+}
+
+func SetExpAttempRedis(ctx context.Context, poolData *config.Config, repo repoRedis.RedisRepositoryContract, dbRedis string, key string, exp time.Duration) (err domain.ErrorData) <span class="cov0" title="0">{
+        defer PanicError()
+
+        errData := repo.Exp(ctx, poolData.DBRedis[dbRedis], key, exp)
+        if errData != nil </span><span class="cov0" title="0">{
+                message := fmt.Sprintf("Failed incr data on func register and func SetExpAttempRedis : %s", errData.Error())
+                log.Println(message)
+
+                err = errorhandler.ErrInternal(errorhandler.ErrCodeUpdate, fmt.Errorf(message))
+                return
+        }</span>
+
+        <span class="cov0" title="0">return</span>
+}
+
+func GetAttempRedis(ctx context.Context, poolData *config.Config, repo repoRedis.RedisRepositoryContract, dbRedis string, key string) (attemp int, err domain.ErrorData) <span class="cov8" title="1">{
+        defer PanicError()
+
+        data, errData := repo.Get(ctx, poolData.DBRedis[dbRedis], key)
+        if errData != nil </span><span class="cov8" title="1">{
+                if errData.Error() != "get redis error : redis: nil" </span><span class="cov0" title="0">{
+                        message := fmt.Sprintf("Failed get data on func register and func GetAttempRedis : %s", errData.Error())
+                        log.Println(message)
+
+                        err = errorhandler.ErrInternal(errorhandler.ErrCodeUpdate, fmt.Errorf(message))
+                        return
+                }</span>
+        }
+
+        <span class="cov8" title="1">if data != "" </span><span class="cov8" title="1">{
+                attemp, errData = strconv.Atoi(data)
+                if errData != nil </span><span class="cov0" title="0">{
+                        message := fmt.Sprintf("Failed parsing data on func register and func GetAttempRedis : %s", errData.Error())
+                        log.Println(message)
+
+                        err = errorhandler.ErrInternal(errorhandler.ErrCodeParsing, fmt.Errorf(message))
+                        return
+                }</span>
+        }
+        <span class="cov8" title="1">return</span>
+}
+
+func AttempRedis(ctx context.Context, poolData *config.Config, repo repoRedis.RedisRepositoryContract, dbRedis string, key string) (block bool, err domain.ErrorData) <span class="cov8" title="1">{
+        dataAttemp, errs := GetAttempRedis(ctx, poolData, repo, dbRedis, key)
+        if errs.Code != 0 </span><span class="cov0" title="0">{
+                err = errs
+                return
+        }</span>
+
+        <span class="cov8" title="1">err = SetAttempRedis(ctx, poolData, repo, dbRedis, key)
+        if err.Code != 0 </span><span class="cov0" title="0">{
+                return
+        }</span>
+
+        <span class="cov8" title="1">if dataAttemp &gt;= consts.AttempOTP </span><span class="cov0" title="0">{
+                block = true
+                err = SetExpAttempRedis(ctx, poolData, repo, dbRedis, key, consts.RedisOTPExp)
+                if err.Code != 0 </span><span class="cov0" title="0">{
+                        return
+                }</span>
+        }
+        <span class="cov8" title="1">return</span>
+}
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>
