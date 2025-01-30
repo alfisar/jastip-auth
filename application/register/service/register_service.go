@@ -9,6 +9,7 @@ import (
 	"jastip/domain"
 	"jastip/internal/consts"
 	"jastip/internal/errorhandler"
+	"jastip/internal/handler"
 	"jastip/internal/helper"
 	"log"
 )
@@ -27,7 +28,7 @@ func NewRegisterService(repo repository.UserContractRepository, repoRedis repoRe
 
 func (s *registerService) Register(ctx context.Context, poolData *config.Config, data domain.User) (result domain.User, err domain.ErrorData) {
 
-	defer panicError()
+	defer handler.PanicError()
 
 	// Validasi apakah sudah ada user dengan emal dan nomor hp yang sama
 	err = validateUser(poolData, s.repo, data)
@@ -114,7 +115,7 @@ func (s *registerService) VerifyOTP(ctx context.Context, poolData *config.Config
 }
 
 func (s *registerService) ResendOtp(ctx context.Context, poolData *config.Config, email string, nohp string, fullName string) (err domain.ErrorData) {
-	defer panicError()
+	defer handler.PanicError()
 
 	block, errs := attempRedis(ctx, poolData, s.repoRedis, consts.RedisOTP, consts.Attemp+email+nohp)
 	if errs.Code != 0 {
