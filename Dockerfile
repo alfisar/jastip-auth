@@ -7,7 +7,6 @@ COPY . .
 
 RUN apt update
 RUN apt install -y tzdata
-RUN apt-get update && apt-get install -y wkhtmltopdf
 
 ENV TZ Asia/Jakarta
 
