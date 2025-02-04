@@ -87,7 +87,7 @@ const (
 	ErrMsgLoginRequired string = "Username / Password Cannot Empty"
 
 	// Error message for data Login not match
-	ErrMsgLoginFailed string = "Pastikan Username / Password Benar"
+	ErrMsgLoginFailed string = "Pastikan Email / No Hp / Password Benar"
 
 	// Error message for invalid token
 	ErrMsgTokenInvalid string = "Token Tidak Valid"
@@ -97,6 +97,9 @@ const (
 
 	// Error message for data OTP not match
 	ErrMsgOTPInvalid string = "Invalid OTP"
+
+	// Error message for failed generate token
+	ErrMsgFailedGenerateToken string = "Gagal mendapatkan token"
 )
 
 func ErrValidation(err error) (result domain.ErrorData) {
@@ -105,6 +108,17 @@ func ErrValidation(err error) (result domain.ErrorData) {
 	result.HTTPCode = fasthttp.StatusBadRequest
 	result.Message = "Invalid data input"
 	result.Errors = err.Error()
+	return
+}
+
+func ErrLogin(err error) (result domain.ErrorData) {
+	result.Status = "error"
+	result.Code = ErrCodeInvalidInput
+	result.HTTPCode = fasthttp.StatusBadRequest
+	result.Message = ErrMsgLoginFailed
+	if err != nil {
+		result.Errors = err.Error()
+	}
 	return
 }
 

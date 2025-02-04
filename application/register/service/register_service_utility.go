@@ -14,9 +14,7 @@ import (
 	"jastip/internal/handler"
 	"jastip/internal/helper"
 	"log"
-	"strconv"
 	"sync"
-	"time"
 )
 
 func validateUser(poolData *config.Config, repo repository.UserContractRepository, data domain.User) (err domain.ErrorData) {
@@ -64,7 +62,7 @@ func checkUserExist(poolData *config.Config, repo repository.UserContractReposit
 	}
 
 	if result.Id != 0 {
-		message := fmt.Sprintf("Invalid logic on func registration : %s", "email already exist")
+		message := fmt.Sprintf("Invalid logic on func registration : %s", "email or nohp already exist")
 		log.Println(message)
 
 		return result, errorhandler.ErrInvalidLogic(errorhandler.ErrCodeInvalidInput, errorhandler.ErrMsgEmailNoHPUnique, message)
@@ -162,84 +160,6 @@ func updateDataUser(poolData *config.Config, repo repository.UserContractReposit
 
 		err = errorhandler.ErrInternal(errorhandler.ErrCodeUpdate, fmt.Errorf(message))
 		return
-	}
-	return
-}
-
-func setAttempRedis(ctx context.Context, poolData *config.Config, repo repoRedis.RedisRepositoryContract, dbRedis string, key string) (err domain.ErrorData) {
-	defer handler.PanicError()
-
-	errData := repo.Incr(ctx, poolData.DBRedis[dbRedis], key)
-	if errData != nil {
-		message := fmt.Sprintf("Failed incr data on func register and func SetAttempRedis : %s", errData.Error())
-		log.Println(message)
-
-		err = errorhandler.ErrInternal(errorhandler.ErrCodeUpdate, fmt.Errorf(message))
-		return
-	}
-
-	return
-}
-
-func setExpAttempRedis(ctx context.Context, poolData *config.Config, repo repoRedis.RedisRepositoryContract, dbRedis string, key string, exp time.Duration) (err domain.ErrorData) {
-	defer handler.PanicError()
-
-	errData := repo.Exp(ctx, poolData.DBRedis[dbRedis], key, exp)
-	if errData != nil {
-		message := fmt.Sprintf("Failed incr data on func register and func SetExpAttempRedis : %s", errData.Error())
-		log.Println(message)
-
-		err = errorhandler.ErrInternal(errorhandler.ErrCodeUpdate, fmt.Errorf(message))
-		return
-	}
-
-	return
-}
-
-func getAttempRedis(ctx context.Context, poolData *config.Config, repo repoRedis.RedisRepositoryContract, dbRedis string, key string) (attemp int, err domain.ErrorData) {
-	defer handler.PanicError()
-
-	data, errData := repo.Get(ctx, poolData.DBRedis[dbRedis], key)
-	if errData != nil {
-		if errData.Error() != "get redis error : redis: nil" {
-			message := fmt.Sprintf("Failed get data on func register and func GetAttempRedis : %s", errData.Error())
-			log.Println(message)
-
-			err = errorhandler.ErrInternal(errorhandler.ErrCodeUpdate, fmt.Errorf(message))
-			return
-		}
-	}
-
-	if data != "" {
-		attemp, errData = strconv.Atoi(data)
-		if errData != nil {
-			message := fmt.Sprintf("Failed parsing data on func register and func GetAttempRedis : %s", errData.Error())
-			log.Println(message)
-
-			err = errorhandler.ErrInternal(errorhandler.ErrCodeParsing, fmt.Errorf(message))
-			return
-		}
-	}
-	return
-}
-
-func attempRedis(ctx context.Context, poolData *config.Config, repo repoRedis.RedisRepositoryContract, dbRedis string, key string) (block bool, err domain.ErrorData) {
-	dataAttemp, errs := getAttempRedis(ctx, poolData, repo, dbRedis, key)
-	if errs.Code != 0 {
-		err = errs
-		return
-	}
-
-	err = setAttempRedis(ctx, poolData, repo, dbRedis, key)
-	if err.Code != 0 {
-		return
-	}
-	if dataAttemp >= consts.AttempOTP {
-		block = true
-		err = setExpAttempRedis(ctx, poolData, repo, dbRedis, key, consts.RedisOTPExp)
-		if err.Code != 0 {
-			return
-		}
 	}
 	return
 }

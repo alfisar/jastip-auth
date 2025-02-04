@@ -30,7 +30,7 @@ func (s *registerService) Register(ctx context.Context, poolData *config.Config,
 
 	defer handler.PanicError()
 
-	// Validasi apakah sudah ada user dengan emal dan nomor hp yang sama
+	// Validasi apakah sudah ada user dengan email dan nomor hp yang sama
 	err = validateUser(poolData, s.repo, data)
 	if err.Code != 0 {
 		return
@@ -56,7 +56,7 @@ func (s *registerService) Register(ctx context.Context, poolData *config.Config,
 	}
 
 	// set data attemp redis
-	block, errs := attempRedis(ctx, poolData, s.repoRedis, consts.RedisOTP, consts.Attemp+data.Email+data.NoHP)
+	block, errs := handler.AttempRedis(ctx, poolData, s.repoRedis, consts.RedisOTP, consts.Attemp+data.Email+data.NoHP)
 	if errs.Code != 0 {
 		err = errs
 		return
@@ -117,7 +117,7 @@ func (s *registerService) VerifyOTP(ctx context.Context, poolData *config.Config
 func (s *registerService) ResendOtp(ctx context.Context, poolData *config.Config, email string, nohp string, fullName string) (err domain.ErrorData) {
 	defer handler.PanicError()
 
-	block, errs := attempRedis(ctx, poolData, s.repoRedis, consts.RedisOTP, consts.Attemp+email+nohp)
+	block, errs := handler.AttempRedis(ctx, poolData, s.repoRedis, consts.RedisOTP, consts.Attemp+email+nohp)
 	if errs.Code != 0 {
 		err = errs
 		return

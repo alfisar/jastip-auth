@@ -24,5 +24,6 @@ func NewRouter() *fiber.App {
 
 	simpleRoute(api)
 	RegisterInit().regisRouters(api)
+	LoginLogoutInit().loginLogoutRouters(api)
 	return app
 }

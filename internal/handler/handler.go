@@ -35,3 +35,13 @@ func HandlerResend(c *fiber.Ctx) (domain.UserResendOtpRequest, error) {
 
 	return request, nil
 }
+
+func HandlerLogin(c *fiber.Ctx) (domain.UserLoginRequest, error) {
+	request := domain.UserLoginRequest{}
+	errData := c.BodyParser(&request)
+	if errData != nil {
+		return request, errData
+	}
+
+	return request, nil
+}

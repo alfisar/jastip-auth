@@ -33,6 +33,7 @@ const (
 
 	// config expired time
 	RedisOTPExp time.Duration = 5 * time.Minute
+	TokenExp    time.Duration = 15 * time.Minute
 
 	// configuration flag
 	Attemp    string = "Attemp_"

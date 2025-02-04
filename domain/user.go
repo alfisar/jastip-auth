@@ -31,7 +31,6 @@ type UserVerifyOtpRequest struct {
 }
 
 type UserLoginRequest struct {
-	Email    string `json:"email"`
-	NoHP     string `json:"nohp"`
+	Username string `json:"username"`
 	Password string `json:"password"`
 }
