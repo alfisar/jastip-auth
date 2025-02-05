@@ -22,6 +22,7 @@ const (
 	// config response message
 	SuccessRegister    string = "successfully register"
 	SuccessCreatedData string = "successfully created data"
+	SuccessGetData     string = "successfully get data"
 	SuccessUpdateData  string = "successfully updated data"
 	SuccessVerifyData  string = "successfully verify data"
 

@@ -3,6 +3,9 @@ package router
 import (
 	controllerLogin "jastip/application/loginlogout/controller"
 	serviceLogin "jastip/application/loginlogout/service"
+
+	controllerProfile "jastip/application/profile/controller"
+	serviceProfile "jastip/application/profile/service"
 	repoRedis "jastip/application/redis/repository"
 	controllerRegister "jastip/application/register/controller"
 	"jastip/application/register/service"
@@ -38,4 +41,12 @@ func setMiddleware() *middlewere.AuthenticateMiddleware {
 	jwtData.Secret = os.Getenv("JWT_SECRET")
 	middleWR := middlewere.NewAuthenticateMiddleware(jwtData)
 	return middleWR
+}
+
+func ProfileInit() *profileRouter {
+	repo := repoUser.NewUserRpository()
+
+	serv := serviceProfile.NewProfileService(repo)
+	controlProfile := controllerProfile.NewProfileController(serv)
+	return NewProfileRouter(controlProfile)
 }

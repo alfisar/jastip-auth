@@ -34,3 +34,13 @@ type UserLoginRequest struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
+
+type ProfileResponse struct {
+	Id       int    `gorm:"primaryKey; column:id" json:"id"`
+	FullName string `gorm:"column:full_name" json:"full_name"`
+	Username string `gorm:"column:username" json:"username"`
+	Email    string `gorm:"column:email" json:"email"`
+	NoHP     string `gorm:"column:nohp" json:"nohp"`
+	Role     int    `gorm:"column:role" json:"role"`
+	Status   int    `gorm:"column:status" json:"status"`
+}

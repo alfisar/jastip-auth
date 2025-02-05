@@ -1,6 +1,7 @@
 package helper
 
 import (
+	"fmt"
 	"jastip/domain"
 	validator "jastip/internal/validation"
 	"strconv"
@@ -53,6 +54,63 @@ func ValidationLogin(data domain.UserLoginRequest) (err error) {
 			validation.Field(&data.Username, validator.Numeric),
 			validation.Field(&data.Password, validator.Required, validator.AlphanumericSimbols),
 		)
+	}
+
+	return
+}
+
+func filterRequestBody(data map[string]any, allowedKeys []string) map[string]any {
+	filtered := make(map[string]any)
+	for _, key := range allowedKeys {
+		if val, exists := data[key]; exists {
+			filtered[key] = val
+		}
+	}
+	return filtered
+}
+
+func ValidationUpdateProfile(data map[string]any) (err error) {
+	var (
+		rules validation.Rule
+	)
+	allowedKeys := []string{
+		"full_name",
+		"email",
+		"nohp",
+		"password",
+	}
+
+	mappingData := filterRequestBody(data, allowedKeys)
+	if len(mappingData) == 0 {
+		err = fmt.Errorf("data cannot empty")
+		return
+	}
+	for key, v := range mappingData {
+
+		if key == "nohp" {
+			rules = validator.Numeric
+		} else if key == "email" {
+			rules = validator.Email
+		} else {
+			rules = validator.AlphanumericSimbols
+		}
+		err = ValidateMappingData(v, key, err, rules)
+	}
+
+	return
+}
+
+func ValidateMappingData(data any, key string, errs error, rules validation.Rule) (err error) {
+
+	err = validation.Validate(data, rules)
+	if err != nil {
+		err = fmt.Errorf(key + ": " + err.Error())
+		if errs != nil {
+
+			err = fmt.Errorf(errs.Error()[:len(errs.Error())-1] + "; " + err.Error())
+		}
+	} else {
+		err = errs
 	}
 
 	return

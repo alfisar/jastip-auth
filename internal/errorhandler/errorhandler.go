@@ -168,6 +168,18 @@ func ErrInsertData(err error) (result domain.ErrorData) {
 	return
 }
 
+func ErrUpdateData(err error) (result domain.ErrorData) {
+	result = domain.ErrorData{
+		Status:   "error",
+		Code:     ErrCodeUpdate,
+		HTTPCode: fasthttp.StatusBadRequest,
+		Message:  "Failed update data",
+		Errors:   err.Error(),
+	}
+
+	return
+}
+
 func ErrInvalidLogic(code int, message string, errorData string) (result domain.ErrorData) {
 	result = domain.ErrorData{
 		Status:   "error",
