@@ -2,7 +2,9 @@ package middlewere
 
 import (
 	"errors"
+	"jastip/application/redis/repository"
 	"jastip/config"
+	"jastip/internal/consts"
 	"jastip/internal/errorhandler"
 	"jastip/internal/helper"
 	"jastip/internal/jwthandler"
@@ -80,6 +82,24 @@ func (obj *AuthenticateMiddleware) Authenticate(ctx *fiber.Ctx) error {
 
 		return ctx.Status(http.StatusUnauthorized).JSON(err)
 	}
+
+	keys := "TOKEN_" + claim["user_id"].(string)
+	repoRedis := repository.NewRedisRepository()
+	result, errData := repoRedis.Get(ctx.Context(), poolData.DBRedis[consts.RedisToken], keys)
+	if errData != nil {
+		err := errorhandler.ErrMiddleware(errorhandler.ErrCodeInvalidAuth, errorhandler.ErrMsgTokenInvalid, errData)
+
+		return ctx.Status(http.StatusUnauthorized).JSON(err)
+	}
+
+	if result != tokenString || result == "" {
+		if errData != nil {
+			err := errorhandler.ErrMiddleware(errorhandler.ErrCodeInvalidAuth, errorhandler.ErrMsgTokenInvalid, errData)
+
+			return ctx.Status(http.StatusUnauthorized).JSON(err)
+		}
+	}
+
 	ctx.Locals("data", claim["user_id"])
 
 	return ctx.Next()

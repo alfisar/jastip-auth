@@ -1,8 +1,10 @@
 package helper
 
 import (
+	"bytes"
 	"crypto/aes"
 	"crypto/cipher"
+	"crypto/rand"
 	"crypto/sha256"
 	"encoding/base64"
 	"fmt"
@@ -87,6 +89,37 @@ func DecryptAES256CBC(poolData *config.Config, data string) (result string, err 
 
 	// Unpad the decrypted data
 	return string(Unpad(encryptedDataByte)), nil
+}
+
+// Encryption data with AES-256-CBC method
+func EncryptAES256CBC(poolData *config.Config, data []byte) (string, error) {
+
+	private_key := HashSha256(poolData.Hash.Key)
+	data = pad(data)
+
+	iv := make([]byte, aes.BlockSize)
+	if _, err := rand.Read(iv); err != nil {
+		return "", err
+	}
+
+	block, err := aes.NewCipher(private_key)
+	if err != nil {
+		return "", err
+	}
+
+	ciphertext := make([]byte, len(data))
+	mode := cipher.NewCBCEncrypter(block, iv)
+	mode.CryptBlocks(ciphertext, data)
+
+	encryptedData := append(iv, ciphertext...)
+	return base64.StdEncoding.EncodeToString(encryptedData), nil
+}
+
+// Adding padding to data using PKCS#7
+func pad(data []byte) []byte {
+	padding := aes.BlockSize - (len(data) % aes.BlockSize)
+	padText := bytes.Repeat([]byte{byte(padding)}, padding)
+	return append(data, padText...)
 }
 
 // Remove the padding data

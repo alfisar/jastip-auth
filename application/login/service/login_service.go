@@ -41,7 +41,7 @@ func (s *loginService) Login(ctx context.Context, poolData *config.Config, data 
 		return
 	}
 
-	token, err = getToken(ctx, poolData.DBRedis[consts.RedisToken], "TOKEN_"+strconv.Itoa(id), id, s.repoRedis)
+	token, err = getToken(ctx, poolData, poolData.DBRedis[consts.RedisToken], "TOKEN_"+strconv.Itoa(id), id, s.repoRedis)
 
 	return
 }

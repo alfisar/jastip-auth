@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	repoRedis "jastip/application/redis/repository"
 	"jastip/application/user/repository"
@@ -62,8 +61,11 @@ func validateUser(ctx context.Context, poolData *config.Config, repo repository.
 }
 
 func getUser(poolData *config.Config, repo repository.UserContractRepository, key []string, value []any) (result domain.User, err domain.ErrorData) {
+	var (
+		errData error
+	)
+
 	defer handler.PanicError()
-	errData := errors.New("")
 
 	where := map[string]any{}
 	for i, v := range key {
@@ -79,27 +81,21 @@ func getUser(poolData *config.Config, repo repository.UserContractRepository, ke
 	return
 }
 
-func getToken(ctx context.Context, conn *redis.Client, key string, id int, repoRedis repoRedis.RedisRepositoryContract) (token string, err domain.ErrorData) {
-	result, errData := repoRedis.Get(ctx, conn, key)
-	if errData != nil {
-		if errData.Error() != "get redis error : redis: nil" {
-			message := fmt.Sprintf("Failed get data on func getToken : %s", errData.Error())
-			log.Println(message)
-
-			err = errorhandler.ErrInternal(errorhandler.ErrCodeUpdate, fmt.Errorf(message))
-			return
-		}
-	}
-
-	if result != "" {
-		token = result
-		return
-	}
+func getToken(ctx context.Context, poolData *config.Config, conn *redis.Client, key string, id int, repoRedis repoRedis.RedisRepositoryContract) (token string, err domain.ErrorData) {
 
 	jwts := jwthandler.GetJwt()
 	tokenData, errData := jwts.GetToken(consts.TokenExp, id)
 	if errData != nil {
 		message := fmt.Sprintf("failed generate token : %s", errData.Error())
+		log.Println(message)
+
+		err = errorhandler.ErrInvalidLogic(errorhandler.ErrCodeGenerateToken, errorhandler.ErrMsgFailedGenerateToken, errData.Error())
+		return
+	}
+
+	tokenData, errData = helper.EncryptAES256CBC(poolData, []byte(tokenData))
+	if errData != nil {
+		message := fmt.Sprintf("failed generate token on func getToken: %s", errData.Error())
 		log.Println(message)
 
 		err = errorhandler.ErrInvalidLogic(errorhandler.ErrCodeGenerateToken, errorhandler.ErrMsgFailedGenerateToken, errData.Error())
