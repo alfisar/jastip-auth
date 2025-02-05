@@ -1,13 +1,16 @@
 package router
 
 import (
-	controllerLogin "jastip/application/login/controller"
-	serviceLogin "jastip/application/login/service"
+	controllerLogin "jastip/application/loginlogout/controller"
+	serviceLogin "jastip/application/loginlogout/service"
 	repoRedis "jastip/application/redis/repository"
 	controllerRegister "jastip/application/register/controller"
 	"jastip/application/register/service"
 	simpleControll "jastip/application/simple/controller"
 	repoUser "jastip/application/user/repository"
+	"jastip/internal/jwthandler"
+	"jastip/internal/middlewere"
+	"os"
 )
 
 func SimpleInit() *simpleControll.SimpleController {
@@ -28,4 +31,11 @@ func LoginLogoutInit() *loginLogoutRouter {
 	serv := serviceLogin.NewLoginService(repo, repoRedis)
 	controlRegis := controllerLogin.NewLoginController(serv)
 	return NewLoginLogoutRouter(controlRegis)
+}
+
+func setMiddleware() *middlewere.AuthenticateMiddleware {
+	jwtData := jwthandler.GetJwt()
+	jwtData.Secret = os.Getenv("JWT_SECRET")
+	middleWR := middlewere.NewAuthenticateMiddleware(jwtData)
+	return middleWR
 }

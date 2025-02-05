@@ -11,6 +11,7 @@ import (
 	"jastip/internal/response"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -83,7 +84,7 @@ func (obj *AuthenticateMiddleware) Authenticate(ctx *fiber.Ctx) error {
 		return ctx.Status(http.StatusUnauthorized).JSON(err)
 	}
 
-	keys := "TOKEN_" + claim["user_id"].(string)
+	keys := "TOKEN_" + strconv.Itoa(int(claim["user_id"].(float64)))
 	repoRedis := repository.NewRedisRepository()
 	result, errData := repoRedis.Get(ctx.Context(), poolData.DBRedis[consts.RedisToken], keys)
 	if errData != nil {

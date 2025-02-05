@@ -1,7 +1,7 @@
 package router
 
 import (
-	"jastip/application/login/controller"
+	"jastip/application/loginlogout/controller"
 	"jastip/internal/handler"
 	"jastip/internal/helper"
 	"jastip/internal/middlewere"
@@ -20,6 +20,9 @@ func NewLoginLogoutRouter(Controller controller.LoginControllerContract) *loginL
 }
 
 func (obj *loginLogoutRouter) loginLogoutRouters(v1 fiber.Router) {
+	middleweres := setMiddleware()
 	v1.Post("/login", middlewere.Validation(handler.HandlerLogin, helper.ValidationLogin), obj.Controller.Login)
+
+	v1.Post("/logout", middleweres.Authenticate, obj.Controller.Logout)
 
 }
