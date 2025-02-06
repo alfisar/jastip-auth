@@ -84,6 +84,7 @@ func Init() {
 // Function to initialize DB
 func initDB() *gorm.DB {
 	fmt.Println("DB_USE : " + os.Getenv("DB_USE"))
+	fmt.Println("DB_HOST : " + os.Getenv("DB_HOST"))
 	switch os.Getenv("DB_USE") {
 	case "MySQL":
 		db, err := database.NewConnSQL()
