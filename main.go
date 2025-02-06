@@ -9,5 +9,5 @@ func main() {
 	config.Init()
 	router := router.NewRouter()
 
-	router.Listen(":8801")
+	router.Listen("0.0.0.0:8801")
 }
