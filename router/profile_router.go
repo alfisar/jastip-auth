@@ -25,4 +25,7 @@ func (obj *profileRouter) profileRouters(v1 fiber.Router) {
 
 	v1.Patch("/profile", middleweres.Authenticate, middlewere.Validation(handler.HandlerUpdateProfile, helper.ValidationUpdateProfile), obj.Controller.Update)
 
+	v1.Get("/profile/address", middleweres.Authenticate, obj.Controller.GetAddress)
+	v1.Post("/profile/address", middleweres.Authenticate, middlewere.Validation(handler.HandlerpostAddress, helper.ValidationAddress), obj.Controller.SaveAddress)
+
 }

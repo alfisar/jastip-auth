@@ -100,6 +100,36 @@ func ValidationUpdateProfile(data map[string]any) (err error) {
 	return
 }
 
+func ValidationAddress(data map[string]any) (err error) {
+	var (
+		rules validation.Rule
+	)
+	allowedKeys := []string{
+		"street",
+		"city",
+		"district",
+		"subdistrict",
+		"postalcode",
+	}
+
+	mappingData := filterRequestBody(data, allowedKeys)
+	if len(mappingData) == 0 {
+		err = fmt.Errorf("data cannot empty")
+		return
+	}
+	for key, v := range mappingData {
+
+		if key == "postalcode" {
+			rules = validator.Numeric
+		} else {
+			rules = validator.AlphanumericSimbols
+		}
+		err = ValidateMappingData(v, key, err, rules)
+	}
+
+	return
+}
+
 func ValidateMappingData(data any, key string, errs error, rules validation.Rule) (err error) {
 
 	err = validation.Validate(data, rules)

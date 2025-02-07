@@ -77,6 +77,9 @@ const (
 	// Error code for panic
 	ErrCodePanic int = 507
 
+	// Error code for panic
+	ErrCodeInternalServer int = 508
+
 	// Error message for data exist
 	ErrMsgDataExist string = "Data already exist"
 

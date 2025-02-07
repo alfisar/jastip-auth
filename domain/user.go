@@ -44,3 +44,22 @@ type ProfileResponse struct {
 	Role     int    `gorm:"column:role" json:"role"`
 	Status   int    `gorm:"column:status" json:"status"`
 }
+
+type AddressResponse struct {
+	Id          int    `gorm:"primaryKey; column:id" json:"id"`
+	Street      string `gorm:"column:street" json:"street"`
+	City        string `gorm:"column:city" json:"city"`
+	District    string `gorm:"column:district" json:"district"`
+	SUbDistrict string `gorm:"column:subdistrict" json:"subdistrict"`
+	PostalCode  string `gorm:"column:postalcode" json:"postal_code"`
+}
+
+type AddressRequest struct {
+	Id          int    `gorm:"primaryKey; column:id" json:"id"`
+	UserID      int    `gorm:"column:user_id" json:"user_id"`
+	Street      string `gorm:"column:street" json:"street"`
+	City        string `gorm:"column:city" json:"city"`
+	District    string `gorm:"column:district" json:"district"`
+	SUbDistrict string `gorm:"column:subdistrict" json:"subdistrict"`
+	PostalCode  string `gorm:"column:postalcode" json:"postalcode"`
+}

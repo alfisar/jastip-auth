@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	repositoryAddress "jastip/application/address/repository"
 	"jastip/application/user/repository"
 	"jastip/config"
 	"jastip/domain"
@@ -12,12 +13,14 @@ import (
 )
 
 type profileService struct {
-	repo repository.UserContractRepository
+	repo        repository.UserContractRepository
+	repoAddress repositoryAddress.AddressRepositoryContract
 }
 
-func NewProfileService(repo repository.UserContractRepository) *profileService {
+func NewProfileService(repo repository.UserContractRepository, repoAddress repositoryAddress.AddressRepositoryContract) *profileService {
 	return &profileService{
-		repo: repo,
+		repo:        repo,
+		repoAddress: repoAddress,
 	}
 }
 
@@ -61,5 +64,21 @@ func (s *profileService) Update(ctx context.Context, poolData *config.Config, us
 		return
 	}
 
+	return
+}
+
+func (s *profileService) GetAddress(ctx context.Context, poolData *config.Config, userId int) (result domain.AddressResponse, err domain.ErrorData) {
+	keys := []string{"user_id"}
+	values := []any{userId}
+	result, err = getDataAddress(ctx, poolData, s.repoAddress, keys, values)
+	if err.Code != 0 {
+		return
+	}
+
+	return
+}
+
+func (s *profileService) SaveAddress(ctx context.Context, poolData *config.Config, userID int, data map[string]any) (err domain.ErrorData) {
+	err = inserSaveAddress(ctx, poolData, userID, s.repoAddress, data)
 	return
 }

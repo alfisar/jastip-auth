@@ -6,6 +6,8 @@ import (
 
 	controllerProfile "jastip/application/profile/controller"
 	serviceProfile "jastip/application/profile/service"
+
+	repoAddress "jastip/application/address/repository"
 	repoRedis "jastip/application/redis/repository"
 	controllerRegister "jastip/application/register/controller"
 	"jastip/application/register/service"
@@ -45,8 +47,9 @@ func setMiddleware() *middlewere.AuthenticateMiddleware {
 
 func ProfileInit() *profileRouter {
 	repo := repoUser.NewUserRpository()
+	repoAddr := repoAddress.NewAddressRepository()
 
-	serv := serviceProfile.NewProfileService(repo)
+	serv := serviceProfile.NewProfileService(repo, repoAddr)
 	controlProfile := controllerProfile.NewProfileController(serv)
 	return NewProfileRouter(controlProfile)
 }
