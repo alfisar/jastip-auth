@@ -7,14 +7,17 @@ import (
 	repoRedis "jastip/application/redis/repository"
 	"jastip/application/user/repository"
 	"jastip/config"
-	"jastip/domain"
-	"jastip/internal/consts"
-	"jastip/internal/errorhandler"
-	"jastip/internal/general"
-	"jastip/internal/handler"
-	"jastip/internal/helper"
 	"log"
 	"sync"
+
+	"github.com/alfisar/jastip-import/domain"
+
+	"jastip/internal/handler"
+
+	"github.com/alfisar/jastip-import/helpers/consts"
+	"github.com/alfisar/jastip-import/helpers/errorhandler"
+	"github.com/alfisar/jastip-import/helpers/general"
+	"github.com/alfisar/jastip-import/helpers/helper"
 )
 
 func validateUser(poolData *config.Config, repo repository.UserContractRepository, data domain.User) (err domain.ErrorData) {
@@ -109,7 +112,15 @@ func generateAndSaveOTP(ctx context.Context, poolData *config.Config, repo repoR
 
 func sendEmail(poolData *config.Config, email string, fullName string, otp string) {
 
-	errData := helper.SendEmailOTP(poolData, email, fullName, otp)
+	smptp := domain.SMTP{
+		Host:   poolData.SMTP.Host,
+		Port:   poolData.SMTP.Port,
+		User:   poolData.SMTP.User,
+		Pass:   poolData.SMTP.Pass,
+		From:   poolData.SMTP.From,
+		Mailer: poolData.SMTP.Mailer,
+	}
+	errData := helper.SendEmailOTP(smptp, email, fullName, otp)
 	if errData != nil {
 		message := fmt.Sprintf("Error send email on func registration and func SendEmail : %s", errData.Error())
 		log.Println(message)

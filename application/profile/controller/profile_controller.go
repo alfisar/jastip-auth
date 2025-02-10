@@ -3,8 +3,9 @@ package controller
 import (
 	"jastip/application/profile/service"
 	"jastip/config"
-	"jastip/internal/consts"
-	"jastip/internal/response"
+
+	"github.com/alfisar/jastip-import/helpers/consts"
+	"github.com/alfisar/jastip-import/helpers/response"
 
 	"github.com/gofiber/fiber/v2"
 )

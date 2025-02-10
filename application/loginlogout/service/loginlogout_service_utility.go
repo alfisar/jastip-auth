@@ -6,13 +6,16 @@ import (
 	repoRedis "jastip/application/redis/repository"
 	"jastip/application/user/repository"
 	"jastip/config"
-	"jastip/domain"
-	"jastip/internal/consts"
-	"jastip/internal/errorhandler"
-	"jastip/internal/handler"
-	"jastip/internal/helper"
-	"jastip/internal/jwthandler"
 	"log"
+
+	"github.com/alfisar/jastip-import/domain"
+
+	"jastip/internal/handler"
+
+	"github.com/alfisar/jastip-import/helpers/consts"
+	"github.com/alfisar/jastip-import/helpers/errorhandler"
+	"github.com/alfisar/jastip-import/helpers/helper"
+	"github.com/alfisar/jastip-import/helpers/jwthandler"
 
 	"github.com/go-redis/redis/v8"
 )
@@ -93,7 +96,7 @@ func getToken(ctx context.Context, poolData *config.Config, conn *redis.Client, 
 		return
 	}
 
-	tokenData, errData = helper.EncryptAES256CBC(poolData, []byte(tokenData))
+	tokenData, errData = helper.EncryptAES256CBC(poolData.Hash.Key, []byte(tokenData))
 	if errData != nil {
 		message := fmt.Sprintf("failed generate token on func getToken: %s", errData.Error())
 		log.Println(message)

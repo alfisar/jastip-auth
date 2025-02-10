@@ -2,8 +2,10 @@ package repository
 
 import (
 	"fmt"
-	"jastip/domain"
-	"jastip/internal/errorhandler"
+
+	"github.com/alfisar/jastip-import/domain"
+
+	"github.com/alfisar/jastip-import/helpers/errorhandler"
 
 	"gorm.io/gorm"
 )

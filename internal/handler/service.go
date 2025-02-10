@@ -4,12 +4,14 @@ import (
 	"context"
 	"fmt"
 	"jastip/config"
-	"jastip/domain"
-	"jastip/internal/consts"
-	"jastip/internal/errorhandler"
 	"log"
 	"strconv"
 	"time"
+
+	"github.com/alfisar/jastip-import/domain"
+
+	"github.com/alfisar/jastip-import/helpers/consts"
+	"github.com/alfisar/jastip-import/helpers/errorhandler"
 
 	repoRedis "jastip/application/redis/repository"
 )

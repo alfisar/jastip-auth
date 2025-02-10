@@ -4,15 +4,17 @@ import (
 	"errors"
 	"jastip/application/redis/repository"
 	"jastip/config"
-	"jastip/internal/consts"
-	"jastip/internal/errorhandler"
-	"jastip/internal/helper"
-	"jastip/internal/jwthandler"
-	"jastip/internal/response"
 	"log"
 	"net/http"
 	"strconv"
 	"time"
+
+	"github.com/alfisar/jastip-import/helpers/consts"
+	"github.com/alfisar/jastip-import/helpers/errorhandler"
+	"github.com/alfisar/jastip-import/helpers/helper"
+	"github.com/alfisar/jastip-import/helpers/response"
+
+	"github.com/alfisar/jastip-import/helpers/jwthandler"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -69,7 +71,7 @@ func (obj *AuthenticateMiddleware) Authenticate(ctx *fiber.Ctx) error {
 		return ctx.Status(http.StatusUnauthorized).JSON(err)
 	}
 
-	token, errData := helper.DecryptAES256CBC(poolData, tokenString)
+	token, errData := helper.DecryptAES256CBC(poolData.Hash.Key, tokenString)
 	if errData != nil {
 		log.Printf("Error hashing aes 256 token on func login : %s", errData.Error())
 

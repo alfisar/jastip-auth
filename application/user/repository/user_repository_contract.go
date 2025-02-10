@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"jastip/domain"
+	"github.com/alfisar/jastip-import/domain"
 
 	"gorm.io/gorm"
 )

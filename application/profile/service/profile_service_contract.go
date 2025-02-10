@@ -3,7 +3,8 @@ package service
 import (
 	"context"
 	"jastip/config"
-	"jastip/domain"
+
+	"github.com/alfisar/jastip-import/domain"
 )
 
 type ProfileServiceContract interface {

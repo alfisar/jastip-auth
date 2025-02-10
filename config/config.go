@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"sync"
 
+	"github.com/alfisar/jastip-import/domain"
 	"github.com/go-redis/redis/v8"
 	"github.com/joho/godotenv"
 	"github.com/minio/minio-go/v7"
@@ -20,7 +21,7 @@ import (
 type Config struct {
 	DBSql   *gorm.DB
 	DBRedis map[string]*redis.Client
-	SMTP    SMTP
+	SMTP    domain.SMTP
 	Minio   Minio
 	Hash    Hash
 }
@@ -28,15 +29,6 @@ type Config struct {
 type Minio struct {
 	Client     *minio.Client
 	BucketName string
-}
-
-type SMTP struct {
-	Host   string
-	Port   string
-	User   string
-	Pass   string
-	From   string
-	Mailer *gomail.Message
 }
 
 type Hash struct {
@@ -61,7 +53,7 @@ func Init() {
 			return &Config{
 				DBSql:   dbSQL,
 				DBRedis: redisDB,
-				SMTP: SMTP{
+				SMTP: domain.SMTP{
 					Host:   os.Getenv("SMTP_HOST"),
 					Port:   os.Getenv("SMTP_PORT"),
 					User:   os.Getenv("SMTP_USER"),

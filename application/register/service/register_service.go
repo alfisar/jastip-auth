@@ -6,12 +6,15 @@ import (
 	repoRedis "jastip/application/redis/repository"
 	"jastip/application/user/repository"
 	"jastip/config"
-	"jastip/domain"
-	"jastip/internal/consts"
-	"jastip/internal/errorhandler"
-	"jastip/internal/handler"
-	"jastip/internal/helper"
 	"log"
+
+	"github.com/alfisar/jastip-import/domain"
+
+	"jastip/internal/handler"
+
+	"github.com/alfisar/jastip-import/helpers/consts"
+	"github.com/alfisar/jastip-import/helpers/errorhandler"
+	"github.com/alfisar/jastip-import/helpers/helper"
 )
 
 type registerService struct {

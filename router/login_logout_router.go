@@ -2,9 +2,11 @@ package router
 
 import (
 	"jastip/application/loginlogout/controller"
-	"jastip/internal/handler"
-	"jastip/internal/helper"
+
 	"jastip/internal/middlewere"
+
+	"github.com/alfisar/jastip-import/helpers/handler"
+	"github.com/alfisar/jastip-import/helpers/helper"
 
 	"github.com/gofiber/fiber/v2"
 )

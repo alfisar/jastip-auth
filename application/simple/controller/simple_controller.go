@@ -2,7 +2,8 @@ package controller
 
 import (
 	"jastip/config"
-	"jastip/domain"
+
+	"github.com/alfisar/jastip-import/domain"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/valyala/fasthttp"

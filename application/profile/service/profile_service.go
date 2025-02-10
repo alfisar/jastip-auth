@@ -5,9 +5,11 @@ import (
 	repositoryAddress "jastip/application/address/repository"
 	"jastip/application/user/repository"
 	"jastip/config"
-	"jastip/domain"
-	"jastip/internal/errorhandler"
-	"jastip/internal/helper"
+
+	"github.com/alfisar/jastip-import/domain"
+
+	"github.com/alfisar/jastip-import/helpers/errorhandler"
+	"github.com/alfisar/jastip-import/helpers/helper"
 
 	"gorm.io/gorm"
 )

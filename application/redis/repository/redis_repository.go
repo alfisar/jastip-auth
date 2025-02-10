@@ -3,8 +3,9 @@ package repository
 import (
 	"context"
 	"fmt"
-	"jastip/internal/errorhandler"
 	"time"
+
+	"github.com/alfisar/jastip-import/helpers/errorhandler"
 
 	"github.com/go-redis/redis/v8"
 )

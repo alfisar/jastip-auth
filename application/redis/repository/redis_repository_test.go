@@ -3,8 +3,9 @@ package repository
 import (
 	"context"
 	"jastip/config"
-	"jastip/internal/consts"
 	"testing"
+
+	"github.com/alfisar/jastip-import/helpers/consts"
 
 	"github.com/stretchr/testify/require"
 )

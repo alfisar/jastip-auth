@@ -5,8 +5,10 @@ import (
 	"encoding/json"
 	"jastip/application/address/repository"
 	"jastip/config"
-	"jastip/domain"
-	"jastip/internal/errorhandler"
+
+	"github.com/alfisar/jastip-import/domain"
+
+	"github.com/alfisar/jastip-import/helpers/errorhandler"
 
 	"github.com/valyala/fasthttp"
 	"gorm.io/gorm"

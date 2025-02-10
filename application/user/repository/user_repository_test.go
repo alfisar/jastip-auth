@@ -2,8 +2,9 @@ package repository
 
 import (
 	"jastip/config"
-	"jastip/domain"
 	"testing"
+
+	"github.com/alfisar/jastip-import/domain"
 
 	"github.com/stretchr/testify/require"
 )

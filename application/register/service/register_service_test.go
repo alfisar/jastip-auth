@@ -3,8 +3,9 @@ package service
 import (
 	"context"
 	"jastip/config"
-	"jastip/domain"
 	"testing"
+
+	"github.com/alfisar/jastip-import/domain"
 
 	repoRedis "jastip/application/redis/repository"
 	"jastip/application/user/repository"
