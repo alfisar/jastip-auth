@@ -10,6 +10,8 @@ RUN apt install -y tzdata
 ENV GOPRIVATE="github.com/alfisar"
 ENV TZ Asia/Jakarta
 
+ARG git_username
+ARG git_token
 RUN echo "GitHub Username: ${git_username}"
 RUN git config --global \
     url."https://${git_username}:${git_token}@github.com/".insteadOf \
