@@ -7,8 +7,12 @@ COPY . .
 
 RUN apt update
 RUN apt install -y tzdata
-
+ENV GOPRIVATE="github.com/alfisar"
 ENV TZ Asia/Jakarta
+
+RUN git config --global \
+    url."https://${git_username}:${git_token}@github.com/".insteadOf \
+    "https://github.com"
 
 RUN go get -d -v ./...
 
