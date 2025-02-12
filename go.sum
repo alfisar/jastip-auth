@@ -1,7 +1,9 @@
-github.com/alfisar/jastip-import v0.0.0-20250210042032-f9aa2bac0836 h1:EHpvSCMZaklStZKyKKyK6/79eD7wiICEowqo7+iTzdA=
-github.com/alfisar/jastip-import v0.0.0-20250210042032-f9aa2bac0836/go.mod h1:2kEuTLim42rWUbrvaD6U3MD/meNH9wo1aA6q9DSGKmM=
-github.com/alfisar/jastip-import v0.0.0-20250210063306-850693cdc58b h1:Rqe1hh/POIZuCtjhByqjchVplb6HoiP+z9cdAJOWc3E=
-github.com/alfisar/jastip-import v0.0.0-20250210063306-850693cdc58b/go.mod h1:2kEuTLim42rWUbrvaD6U3MD/meNH9wo1aA6q9DSGKmM=
+github.com/alfisar/jastip-import v0.0.0-20250212084749-c5ae41cd8b3c h1:X6xp6WR/koIhX9WQP41D95Usn+dojXeFxmgdUZm+CvE=
+github.com/alfisar/jastip-import v0.0.0-20250212084749-c5ae41cd8b3c/go.mod h1:r/DJC7ywzb+0HdxMgCYo4wpENr6Yhwg1+h6sGgvMIko=
+github.com/alfisar/jastip-import v0.0.0-20250212085144-7f194c6ed9f9 h1:fxVEsqrUOmpOBCl4xJw1fh6Uot5efblcdyKryKER3ds=
+github.com/alfisar/jastip-import v0.0.0-20250212085144-7f194c6ed9f9/go.mod h1:r/DJC7ywzb+0HdxMgCYo4wpENr6Yhwg1+h6sGgvMIko=
+github.com/alfisar/jastip-import v0.0.0-20250212085722-509d59965aaf h1:RJoTTwU2sSEykLePA1b0xpgcLIZ+8wYpKYF0KRwxcCw=
+github.com/alfisar/jastip-import v0.0.0-20250212085722-509d59965aaf/go.mod h1:pOSD368ya25+TBlRY1Dyy1W4+d5fCK+/XP3wfWy/PCM=
 github.com/andybalholm/brotli v1.1.1 h1:PR2pgnyFznKEugtsUo0xLdDop5SKXd5Qf5ysW+7XdTA=
 github.com/andybalholm/brotli v1.1.1/go.mod h1:05ib4cKhjx3OQYUY22hTVd34Bc8upXjOLL2rKwwZBoA=
 github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 h1:DklsrG3dyBCFEj5IhUbnKptjxatkF07cF2ak3yi77so=
