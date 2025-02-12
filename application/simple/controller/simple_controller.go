@@ -1,8 +1,6 @@
 package controller
 
 import (
-	"jastip/config"
-
 	"github.com/alfisar/jastip-import/domain"
 
 	"github.com/gofiber/fiber/v2"
@@ -16,7 +14,7 @@ func NewSimpleController() *SimpleController {
 }
 
 func (c *SimpleController) Simple(ctx *fiber.Ctx) error {
-	_ = config.DataPool
+	_ = domain.DataPool
 	ctx.Status(fasthttp.StatusOK).JSON(domain.ErrorData{
 		Status:  "success",
 		Code:    0,

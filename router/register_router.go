@@ -3,7 +3,7 @@ package router
 import (
 	"jastip/application/register/controller"
 
-	"jastip/internal/middlewere"
+	"github.com/alfisar/jastip-import/helpers/middlewere"
 
 	"github.com/alfisar/jastip-import/helpers/handler"
 	"github.com/alfisar/jastip-import/helpers/helper"

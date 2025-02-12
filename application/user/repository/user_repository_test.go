@@ -1,8 +1,9 @@
 package repository
 
 import (
-	"jastip/config"
 	"testing"
+
+	"github.com/alfisar/jastip-import/config"
 
 	"github.com/alfisar/jastip-import/domain"
 
@@ -10,13 +11,13 @@ import (
 )
 
 var (
-	poolData *config.Config
+	poolData *domain.Config
 	repo     = NewUserRpository()
 )
 
 func TestInsert(t *testing.T) {
 	config.Init()
-	poolData = config.DataPool.Get().(*config.Config)
+	poolData = domain.DataPool.Get().(*domain.Config)
 	data := domain.User{
 		FullName: "Alfisar Rachman",
 		Password: "$2a$10$47.eeIVUSlxJ7jBj1tScn.tF2VyVGUj.luuamN8oAg.VWjO7RY7U2",

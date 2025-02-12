@@ -2,7 +2,6 @@ package controller
 
 import (
 	"jastip/application/register/service"
-	"jastip/config"
 
 	"github.com/alfisar/jastip-import/domain"
 
@@ -22,8 +21,8 @@ func NewRegisterController(serv service.RegisterServiceContract) *registerContro
 	}
 }
 
-func (c *registerController) InitPoolData() *config.Config {
-	poolData := config.DataPool.Get().(*config.Config)
+func (c *registerController) InitPoolData() *domain.Config {
+	poolData := domain.DataPool.Get().(*domain.Config)
 	return poolData
 }
 

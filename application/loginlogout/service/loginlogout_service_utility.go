@@ -5,12 +5,11 @@ import (
 	"fmt"
 	repoRedis "jastip/application/redis/repository"
 	"jastip/application/user/repository"
-	"jastip/config"
 	"log"
 
 	"github.com/alfisar/jastip-import/domain"
 
-	"jastip/internal/handler"
+	"github.com/alfisar/jastip-import/helpers/handler"
 
 	"github.com/alfisar/jastip-import/helpers/consts"
 	"github.com/alfisar/jastip-import/helpers/errorhandler"
@@ -20,7 +19,7 @@ import (
 	"github.com/go-redis/redis/v8"
 )
 
-func validateUser(ctx context.Context, poolData *config.Config, repo repository.UserContractRepository, reposiRedis repoRedis.RedisRepositoryContract, data domain.UserLoginRequest) (idUser int, err domain.ErrorData) {
+func validateUser(ctx context.Context, poolData *domain.Config, repo repository.UserContractRepository, reposiRedis repoRedis.RedisRepositoryContract, data domain.UserLoginRequest) (idUser int, err domain.ErrorData) {
 	defer handler.PanicError()
 	result := domain.User{}
 
@@ -63,7 +62,7 @@ func validateUser(ctx context.Context, poolData *config.Config, repo repository.
 	return
 }
 
-func getUser(poolData *config.Config, repo repository.UserContractRepository, key []string, value []any) (result domain.User, err domain.ErrorData) {
+func getUser(poolData *domain.Config, repo repository.UserContractRepository, key []string, value []any) (result domain.User, err domain.ErrorData) {
 	var (
 		errData error
 	)
@@ -84,7 +83,7 @@ func getUser(poolData *config.Config, repo repository.UserContractRepository, ke
 	return
 }
 
-func getToken(ctx context.Context, poolData *config.Config, conn *redis.Client, key string, id int, repoRedis repoRedis.RedisRepositoryContract) (token string, err domain.ErrorData) {
+func getToken(ctx context.Context, poolData *domain.Config, conn *redis.Client, key string, id int, repoRedis repoRedis.RedisRepositoryContract) (token string, err domain.ErrorData) {
 
 	jwts := jwthandler.GetJwt()
 	tokenData, errData := jwts.GetToken(consts.TokenExp, id)

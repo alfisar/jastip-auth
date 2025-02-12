@@ -2,8 +2,8 @@ package controller
 
 import (
 	"jastip/application/profile/service"
-	"jastip/config"
 
+	"github.com/alfisar/jastip-import/domain"
 	"github.com/alfisar/jastip-import/helpers/consts"
 	"github.com/alfisar/jastip-import/helpers/response"
 
@@ -20,8 +20,8 @@ func NewProfileController(serv service.ProfileServiceContract) *profileControlle
 	}
 }
 
-func (c *profileController) InitPoolData() *config.Config {
-	poolData := config.DataPool.Get().(*config.Config)
+func (c *profileController) InitPoolData() *domain.Config {
+	poolData := domain.DataPool.Get().(*domain.Config)
 	return poolData
 }
 

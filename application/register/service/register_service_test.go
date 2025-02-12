@@ -2,8 +2,9 @@ package service
 
 import (
 	"context"
-	"jastip/config"
 	"testing"
+
+	"github.com/alfisar/jastip-import/config"
 
 	"github.com/alfisar/jastip-import/domain"
 
@@ -14,7 +15,7 @@ import (
 )
 
 var (
-	poolData   *config.Config
+	poolData   *domain.Config
 	repoRediss = repoRedis.NewRedisRepository()
 	repo       = repository.NewUserRpository()
 	serv       = NewRegisterService(repo, repoRediss)
@@ -24,7 +25,7 @@ var (
 
 func TestRegister(t *testing.T) {
 	config.Init()
-	poolData = config.DataPool.Get().(*config.Config)
+	poolData = domain.DataPool.Get().(*domain.Config)
 	data := domain.User{
 		FullName: "Alfisar Rachman",
 		Password: "$2a$10$47.eeIVUSlxJ7jBj1tScn.tF2VyVGUj.luuamN8oAg.VWjO7RY7U2",
@@ -41,7 +42,7 @@ func TestRegister(t *testing.T) {
 
 func TestResendOTP(t *testing.T) {
 
-	poolData = config.DataPool.Get().(*config.Config)
+	poolData = domain.DataPool.Get().(*domain.Config)
 
 	err := serv.ResendOtp(ctx, poolData, "alfisarrachman@gmail.com", "081291276666", "alfisar rachman")
 
@@ -50,7 +51,7 @@ func TestResendOTP(t *testing.T) {
 
 func TestVerifyOTP(t *testing.T) {
 
-	poolData = config.DataPool.Get().(*config.Config)
+	poolData = domain.DataPool.Get().(*domain.Config)
 
 	err := serv.VerifyOTP(ctx, poolData, "alfisarrachman@gmail.com", "081291276666", otp)
 	require.Equal(t, domain.ErrorData{}, err)

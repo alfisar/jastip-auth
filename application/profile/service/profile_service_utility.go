@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"jastip/application/address/repository"
-	"jastip/config"
 
 	"github.com/alfisar/jastip-import/domain"
 
@@ -14,7 +13,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func getDataAddress(ctx context.Context, poolData *config.Config, repo repository.AddressRepositoryContract, keys []string, value []any) (result domain.AddressResponse, err domain.ErrorData) {
+func getDataAddress(ctx context.Context, poolData *domain.Config, repo repository.AddressRepositoryContract, keys []string, value []any) (result domain.AddressResponse, err domain.ErrorData) {
 	where := map[string]any{}
 	for i, v := range keys {
 		where[v] = value[i]
@@ -49,7 +48,7 @@ func mapToStruct(data map[string]any) (address domain.AddressRequest, err domain
 	return
 }
 
-func inserSaveAddress(ctx context.Context, poolData *config.Config, userID int, repo repository.AddressRepositoryContract, data map[string]any) (err domain.ErrorData) {
+func inserSaveAddress(ctx context.Context, poolData *domain.Config, userID int, repo repository.AddressRepositoryContract, data map[string]any) (err domain.ErrorData) {
 	keys := []string{"user_id"}
 	values := []any{userID}
 	_, err = getDataAddress(ctx, poolData, repo, keys, values)

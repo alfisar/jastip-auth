@@ -2,7 +2,6 @@ package controller
 
 import (
 	"jastip/application/loginlogout/service"
-	"jastip/config"
 
 	"github.com/alfisar/jastip-import/domain"
 
@@ -22,8 +21,8 @@ func NewLoginController(serv service.LoginServiceContract) *loginController {
 	}
 }
 
-func (c *loginController) InitPoolData() *config.Config {
-	poolData := config.DataPool.Get().(*config.Config)
+func (c *loginController) InitPoolData() *domain.Config {
+	poolData := domain.DataPool.Get().(*domain.Config)
 	return poolData
 }
 

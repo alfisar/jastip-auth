@@ -2,23 +2,25 @@ package repository
 
 import (
 	"context"
-	"jastip/config"
 	"testing"
 
+	"github.com/alfisar/jastip-import/config"
+
+	"github.com/alfisar/jastip-import/domain"
 	"github.com/alfisar/jastip-import/helpers/consts"
 
 	"github.com/stretchr/testify/require"
 )
 
 var (
-	poolData *config.Config
+	poolData *domain.Config
 	repo     = NewRedisRepository()
 	ctx      = context.Background()
 )
 
 func TestInsert(t *testing.T) {
 	config.Init()
-	poolData = config.DataPool.Get().(*config.Config)
+	poolData = domain.DataPool.Get().(*domain.Config)
 
 	err := repo.Insert(ctx, poolData.DBRedis[consts.RedisToken], "coba", "nilai", 0)
 	require.Nil(t, err)

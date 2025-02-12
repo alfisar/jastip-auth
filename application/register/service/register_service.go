@@ -5,12 +5,11 @@ import (
 	"fmt"
 	repoRedis "jastip/application/redis/repository"
 	"jastip/application/user/repository"
-	"jastip/config"
 	"log"
 
 	"github.com/alfisar/jastip-import/domain"
 
-	"jastip/internal/handler"
+	"github.com/alfisar/jastip-import/helpers/handler"
 
 	"github.com/alfisar/jastip-import/helpers/consts"
 	"github.com/alfisar/jastip-import/helpers/errorhandler"
@@ -29,7 +28,7 @@ func NewRegisterService(repo repository.UserContractRepository, repoRedis repoRe
 	}
 }
 
-func (s *registerService) Register(ctx context.Context, poolData *config.Config, data domain.User) (result domain.User, err domain.ErrorData) {
+func (s *registerService) Register(ctx context.Context, poolData *domain.Config, data domain.User) (result domain.User, err domain.ErrorData) {
 
 	defer handler.PanicError()
 
@@ -78,7 +77,7 @@ func (s *registerService) Register(ctx context.Context, poolData *config.Config,
 	return
 }
 
-func (s *registerService) VerifyOTP(ctx context.Context, poolData *config.Config, email string, nohp string, otp string) (err domain.ErrorData) {
+func (s *registerService) VerifyOTP(ctx context.Context, poolData *domain.Config, email string, nohp string, otp string) (err domain.ErrorData) {
 	defer func() {
 		if r := recover(); r != nil {
 			errData := fmt.Errorf(fmt.Sprintf("%s", r))
@@ -117,7 +116,7 @@ func (s *registerService) VerifyOTP(ctx context.Context, poolData *config.Config
 	return
 }
 
-func (s *registerService) ResendOtp(ctx context.Context, poolData *config.Config, email string, nohp string, fullName string) (err domain.ErrorData) {
+func (s *registerService) ResendOtp(ctx context.Context, poolData *domain.Config, email string, nohp string, fullName string) (err domain.ErrorData) {
 	defer handler.PanicError()
 
 	block, errs := handler.AttempRedis(ctx, poolData, s.repoRedis, consts.RedisOTP, consts.Attemp+email+nohp)

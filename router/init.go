@@ -3,7 +3,6 @@ package router
 import (
 	controllerLogin "jastip/application/loginlogout/controller"
 	serviceLogin "jastip/application/loginlogout/service"
-	"jastip/internal/middlewere"
 
 	controllerProfile "jastip/application/profile/controller"
 	serviceProfile "jastip/application/profile/service"
@@ -18,6 +17,7 @@ import (
 	"os"
 
 	"github.com/alfisar/jastip-import/helpers/jwthandler"
+	"github.com/alfisar/jastip-import/helpers/middlewere"
 )
 
 func SimpleInit() *simpleControll.SimpleController {

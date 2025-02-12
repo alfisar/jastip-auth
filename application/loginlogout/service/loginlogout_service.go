@@ -4,12 +4,11 @@ import (
 	"context"
 	repoRedis "jastip/application/redis/repository"
 	"jastip/application/user/repository"
-	"jastip/config"
 	"strconv"
 
 	"github.com/alfisar/jastip-import/domain"
 
-	"jastip/internal/handler"
+	"github.com/alfisar/jastip-import/helpers/handler"
 
 	"github.com/alfisar/jastip-import/helpers/consts"
 	"github.com/alfisar/jastip-import/helpers/errorhandler"
@@ -27,7 +26,7 @@ func NewLoginService(repo repository.UserContractRepository,
 		repoRedis: repoRedis,
 	}
 }
-func (s *loginService) Login(ctx context.Context, poolData *config.Config, data domain.UserLoginRequest) (token string, err domain.ErrorData) {
+func (s *loginService) Login(ctx context.Context, poolData *domain.Config, data domain.UserLoginRequest) (token string, err domain.ErrorData) {
 
 	defer func() {
 		errs := handler.PanicError()
@@ -50,7 +49,7 @@ func (s *loginService) Login(ctx context.Context, poolData *config.Config, data 
 	return
 }
 
-func (s *loginService) Logout(ctx context.Context, poolData *config.Config, userID int) (err domain.ErrorData) {
+func (s *loginService) Logout(ctx context.Context, poolData *domain.Config, userID int) (err domain.ErrorData) {
 	keys := "TOKEN_" + strconv.Itoa(userID)
 
 	errData := s.repoRedis.Delete(ctx, poolData.DBRedis[consts.RedisToken], keys)

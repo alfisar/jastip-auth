@@ -1,8 +1,9 @@
 package main
 
 import (
-	"jastip/config"
 	"jastip/router"
+
+	"github.com/alfisar/jastip-import/config"
 )
 
 func main() {

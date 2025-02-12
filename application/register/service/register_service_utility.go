@@ -6,13 +6,12 @@ import (
 	"fmt"
 	repoRedis "jastip/application/redis/repository"
 	"jastip/application/user/repository"
-	"jastip/config"
 	"log"
 	"sync"
 
 	"github.com/alfisar/jastip-import/domain"
 
-	"jastip/internal/handler"
+	"github.com/alfisar/jastip-import/helpers/handler"
 
 	"github.com/alfisar/jastip-import/helpers/consts"
 	"github.com/alfisar/jastip-import/helpers/errorhandler"
@@ -20,7 +19,7 @@ import (
 	"github.com/alfisar/jastip-import/helpers/helper"
 )
 
-func validateUser(poolData *config.Config, repo repository.UserContractRepository, data domain.User) (err domain.ErrorData) {
+func validateUser(poolData *domain.Config, repo repository.UserContractRepository, data domain.User) (err domain.ErrorData) {
 	var wg sync.WaitGroup
 	defer handler.PanicError()
 
@@ -51,7 +50,7 @@ func validateUser(poolData *config.Config, repo repository.UserContractRepositor
 	return
 }
 
-func checkUserExist(poolData *config.Config, repo repository.UserContractRepository, field string, value string) (result domain.User, err domain.ErrorData) {
+func checkUserExist(poolData *domain.Config, repo repository.UserContractRepository, field string, value string) (result domain.User, err domain.ErrorData) {
 	defer handler.PanicError()
 	errData := errors.New("")
 	where := map[string]any{
@@ -74,7 +73,7 @@ func checkUserExist(poolData *config.Config, repo repository.UserContractReposit
 	return
 }
 
-func saveUserToDatabase(poolData *config.Config, repo repository.UserContractRepository, data domain.User) (id int, err domain.ErrorData) {
+func saveUserToDatabase(poolData *domain.Config, repo repository.UserContractRepository, data domain.User) (id int, err domain.ErrorData) {
 	defer handler.PanicError()
 
 	id, errData := repo.Create(poolData.DBSql, data)
@@ -89,7 +88,7 @@ func saveUserToDatabase(poolData *config.Config, repo repository.UserContractRep
 	return
 }
 
-func generateAndSaveOTP(ctx context.Context, poolData *config.Config, repo repoRedis.RedisRepositoryContract, key string) (otp string, err domain.ErrorData) {
+func generateAndSaveOTP(ctx context.Context, poolData *domain.Config, repo repoRedis.RedisRepositoryContract, key string) (otp string, err domain.ErrorData) {
 	defer handler.PanicError()
 	otps, errData := general.GetRandomOTP(6)
 	if errData != nil {
@@ -110,7 +109,7 @@ func generateAndSaveOTP(ctx context.Context, poolData *config.Config, repo repoR
 	return
 }
 
-func sendEmail(poolData *config.Config, email string, fullName string, otp string) {
+func sendEmail(poolData *domain.Config, email string, fullName string, otp string) {
 
 	smptp := domain.SMTP{
 		Host:   poolData.SMTP.Host,
@@ -128,7 +127,7 @@ func sendEmail(poolData *config.Config, email string, fullName string, otp strin
 	}
 }
 
-func validateOtp(ctx context.Context, poolData *config.Config, repo repoRedis.RedisRepositoryContract, key string, otp string) (err domain.ErrorData) {
+func validateOtp(ctx context.Context, poolData *domain.Config, repo repoRedis.RedisRepositoryContract, key string, otp string) (err domain.ErrorData) {
 	defer handler.PanicError()
 
 	otpRedis, errData := repo.Get(ctx, poolData.DBRedis[consts.RedisOTP], key)
@@ -151,7 +150,7 @@ func validateOtp(ctx context.Context, poolData *config.Config, repo repoRedis.Re
 	return
 }
 
-func updateDataUser(poolData *config.Config, repo repository.UserContractRepository, key []string, value []any, keyUpdate []string, valueUpdate []any) (err domain.ErrorData) {
+func updateDataUser(poolData *domain.Config, repo repository.UserContractRepository, key []string, value []any, keyUpdate []string, valueUpdate []any) (err domain.ErrorData) {
 	defer handler.PanicError()
 
 	where := map[string]any{}

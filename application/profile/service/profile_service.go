@@ -4,7 +4,6 @@ import (
 	"context"
 	repositoryAddress "jastip/application/address/repository"
 	"jastip/application/user/repository"
-	"jastip/config"
 
 	"github.com/alfisar/jastip-import/domain"
 
@@ -26,7 +25,7 @@ func NewProfileService(repo repository.UserContractRepository, repoAddress repos
 	}
 }
 
-func (s *profileService) Get(ctx context.Context, poolData *config.Config, userID int) (result domain.ProfileResponse, err domain.ErrorData) {
+func (s *profileService) Get(ctx context.Context, poolData *domain.Config, userID int) (result domain.ProfileResponse, err domain.ErrorData) {
 	where := map[string]any{
 		"id": userID,
 	}
@@ -49,7 +48,7 @@ func (s *profileService) Get(ctx context.Context, poolData *config.Config, userI
 	return
 }
 
-func (s *profileService) Update(ctx context.Context, poolData *config.Config, userId int, data map[string]any) (err domain.ErrorData) {
+func (s *profileService) Update(ctx context.Context, poolData *domain.Config, userId int, data map[string]any) (err domain.ErrorData) {
 	if _, exists := data["password"]; exists {
 		data["password"], err = helper.GeneratePass(data["password"].(string))
 		if err.Code != 0 {
@@ -69,7 +68,7 @@ func (s *profileService) Update(ctx context.Context, poolData *config.Config, us
 	return
 }
 
-func (s *profileService) GetAddress(ctx context.Context, poolData *config.Config, userId int) (result domain.AddressResponse, err domain.ErrorData) {
+func (s *profileService) GetAddress(ctx context.Context, poolData *domain.Config, userId int) (result domain.AddressResponse, err domain.ErrorData) {
 	keys := []string{"user_id"}
 	values := []any{userId}
 	result, err = getDataAddress(ctx, poolData, s.repoAddress, keys, values)
@@ -80,7 +79,7 @@ func (s *profileService) GetAddress(ctx context.Context, poolData *config.Config
 	return
 }
 
-func (s *profileService) SaveAddress(ctx context.Context, poolData *config.Config, userID int, data map[string]any) (err domain.ErrorData) {
+func (s *profileService) SaveAddress(ctx context.Context, poolData *domain.Config, userID int, data map[string]any) (err domain.ErrorData) {
 	err = inserSaveAddress(ctx, poolData, userID, s.repoAddress, data)
 	return
 }
