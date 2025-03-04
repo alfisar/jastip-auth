@@ -7,6 +7,7 @@ import (
 )
 
 func main() {
+	// get init
 	config.Init()
 	router := router.NewRouter()
 
