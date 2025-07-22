@@ -68,9 +68,20 @@ func (s *profileService) Update(ctx context.Context, poolData *domain.Config, us
 	return
 }
 
-func (s *profileService) GetAddress(ctx context.Context, poolData *domain.Config, userId int) (result domain.AddressResponse, err domain.ErrorData) {
+func (s *profileService) GetAllAddress(ctx context.Context, poolData *domain.Config, userId int) (result []domain.AddressResponse, err domain.ErrorData) {
 	keys := []string{"user_id"}
 	values := []any{userId}
+	result, err = getAllDataAddress(ctx, poolData, s.repoAddress, keys, values)
+	if err.Code != 0 {
+		return
+	}
+
+	return
+}
+
+func (s *profileService) GetAddress(ctx context.Context, poolData *domain.Config, id int, userId int) (result domain.AddressResponse, err domain.ErrorData) {
+	keys := []string{"id", "user_id"}
+	values := []any{id, userId}
 	result, err = getDataAddress(ctx, poolData, s.repoAddress, keys, values)
 	if err.Code != 0 {
 		return

@@ -7,5 +7,6 @@ type NewProfileControllerContract interface {
 	Update(ctx *fiber.Ctx) error
 
 	GetAddress(ctx *fiber.Ctx) error
+	GetAllAddress(ctx *fiber.Ctx) error
 	SaveAddress(ctx *fiber.Ctx) error
 }

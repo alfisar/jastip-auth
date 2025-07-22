@@ -13,6 +13,31 @@ import (
 	"gorm.io/gorm"
 )
 
+func getAllDataAddress(ctx context.Context, poolData *domain.Config, repo repository.AddressRepositoryContract, keys []string, value []any) (result []domain.AddressResponse, err domain.ErrorData) {
+	where := map[string]any{}
+	for i, v := range keys {
+		where[v] = value[i]
+	}
+
+	results, errData := repo.GetAll(poolData.DBSql, where)
+	if errData != nil {
+		if errData.Error() == "get all address error : "+gorm.ErrRecordNotFound.Error() {
+			err = errorhandler.ErrRecordNotFound()
+		} else {
+			err = errorhandler.ErrInternal(errorhandler.ErrCodeInternalServer, errData)
+		}
+		return
+	}
+
+	if len(results) == 0 {
+		err = errorhandler.ErrRecordNotFound()
+		return
+	}
+
+	result = results
+	return
+}
+
 func getDataAddress(ctx context.Context, poolData *domain.Config, repo repository.AddressRepositoryContract, keys []string, value []any) (result domain.AddressResponse, err domain.ErrorData) {
 	where := map[string]any{}
 	for i, v := range keys {
