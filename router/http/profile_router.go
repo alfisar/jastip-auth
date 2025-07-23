@@ -1,7 +1,7 @@
 package router
 
 import (
-	"jastip/application/profile/controller"
+	controller "jastip/application/profile/controller/http"
 
 	"github.com/alfisar/jastip-import/helpers/middlewere"
 
@@ -30,6 +30,7 @@ func (obj *profileRouter) profileRouters(v1 fiber.Router) {
 	v1.Get("/profile/address", middleweres.Authenticate, obj.Controller.GetAllAddress)
 	v1.Post("/profile/address", middleweres.Authenticate, middlewere.Validation(handler.HandlerpostAddress, helper.ValidationAddress), obj.Controller.SaveAddress)
 
+	v1.Get("/profile/address/grpc/:id", middleweres.Authenticate, obj.Controller.GetAddrGrpc)
 	v1.Get("/profile/address/:id", middleweres.Authenticate, obj.Controller.GetAddress)
 
 }

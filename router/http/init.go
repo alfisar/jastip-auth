@@ -4,14 +4,14 @@ import (
 	controllerLogin "jastip/application/loginlogout/controller"
 	serviceLogin "jastip/application/loginlogout/service"
 
-	controllerProfile "jastip/application/profile/controller"
+	controllerProfile "jastip/application/profile/controller/http"
 	serviceProfile "jastip/application/profile/service"
 
 	repoAddress "jastip/application/address/repository"
 	repoRedis "jastip/application/redis/repository"
 	controllerRegister "jastip/application/register/controller"
 	"jastip/application/register/service"
-	simpleControll "jastip/application/simple/controller"
+	simpleControll "jastip/application/simple/controller/http"
 	repoUser "jastip/application/user/repository"
 
 	"os"
