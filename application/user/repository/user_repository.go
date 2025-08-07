@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/alfisar/jastip-import/domain"
@@ -16,12 +17,11 @@ func NewUserRpository() *userRepository {
 	return &userRepository{}
 }
 
-func (r *userRepository) Create(conn *gorm.DB, data domain.User) (id int, err error) {
+func (r *userRepository) Create(ctx context.Context, conn *gorm.DB, data domain.User) (id int, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf(fmt.Sprintf("%s", r))
 		}
-		return
 
 	}()
 
@@ -30,7 +30,7 @@ func (r *userRepository) Create(conn *gorm.DB, data domain.User) (id int, err er
 		return
 	}
 
-	err = conn.Debug().Table("users").Create(&data).Error
+	err = conn.WithContext(ctx).Debug().Table("users").Create(&data).Error
 	if err != nil {
 		err = fmt.Errorf("create users error : %w", err)
 		return
@@ -40,12 +40,11 @@ func (r *userRepository) Create(conn *gorm.DB, data domain.User) (id int, err er
 	return
 }
 
-func (r *userRepository) Get(conn *gorm.DB, where map[string]any) (data domain.User, err error) {
+func (r *userRepository) Get(ctx context.Context, conn *gorm.DB, where map[string]any) (data domain.User, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf(fmt.Sprintf("%s", r))
 		}
-		return
 
 	}()
 
@@ -54,7 +53,7 @@ func (r *userRepository) Get(conn *gorm.DB, where map[string]any) (data domain.U
 		return
 	}
 
-	err = conn.Debug().Table("users").Where(where).First(&data).Error
+	err = conn.WithContext(ctx).Debug().Table("users").Where(where).First(&data).Error
 	if err != nil {
 		err = fmt.Errorf("get users error : %w", err)
 		return
@@ -63,7 +62,7 @@ func (r *userRepository) Get(conn *gorm.DB, where map[string]any) (data domain.U
 	return
 }
 
-func (r *userRepository) Update(conn *gorm.DB, where map[string]any, updates map[string]any) (err error) {
+func (r *userRepository) Update(ctx context.Context, conn *gorm.DB, where map[string]any, updates map[string]any) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf(fmt.Sprintf("%s", r))
@@ -77,7 +76,7 @@ func (r *userRepository) Update(conn *gorm.DB, where map[string]any, updates map
 		return
 	}
 
-	data := conn.Debug().Table("users").Where(where).Updates(updates)
+	data := conn.WithContext(ctx).Debug().Table("users").Where(where).Updates(updates)
 
 	if data.Error != nil {
 		err = fmt.Errorf("Update user error : %w", err)

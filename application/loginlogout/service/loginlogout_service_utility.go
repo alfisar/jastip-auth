@@ -32,13 +32,13 @@ func validateUser(ctx context.Context, poolData *domain.Config, repo repository.
 		return
 	}
 
-	result, errs = getUser(poolData, repo, []string{"email"}, []any{data.Username})
+	result, errs = getUser(ctx, poolData, repo, []string{"email"}, []any{data.Username})
 	if errs.Code != 0 {
 		err = errs
 		return
 	}
 	if result.Id == 0 {
-		result, errs = getUser(poolData, repo, []string{"nohp"}, []any{data.Username})
+		result, errs = getUser(ctx, poolData, repo, []string{"nohp"}, []any{data.Username})
 		if errs.Code != 0 {
 			err = errs
 			return
@@ -62,7 +62,7 @@ func validateUser(ctx context.Context, poolData *domain.Config, repo repository.
 	return
 }
 
-func getUser(poolData *domain.Config, repo repository.UserContractRepository, key []string, value []any) (result domain.User, err domain.ErrorData) {
+func getUser(ctx context.Context, poolData *domain.Config, repo repository.UserContractRepository, key []string, value []any) (result domain.User, err domain.ErrorData) {
 	var (
 		errData error
 	)
@@ -74,7 +74,7 @@ func getUser(poolData *domain.Config, repo repository.UserContractRepository, ke
 		where[v] = value[i]
 	}
 
-	result, errData = repo.Get(poolData.DBSql, where)
+	result, errData = repo.Get(ctx, poolData.DBSql, where)
 	if errData != nil && errData.Error() != "get users error : record not found" {
 		return result, errorhandler.ErrGetData(errData)
 

@@ -33,7 +33,7 @@ func (s *registerService) Register(ctx context.Context, poolData *domain.Config,
 	defer handler.PanicError()
 
 	// Validasi apakah sudah ada user dengan email dan nomor hp yang sama
-	err = validateUser(poolData, s.repo, data)
+	err = validateUser(ctx, poolData, s.repo, data)
 	if err.Code != 0 {
 		return
 	}
@@ -44,7 +44,7 @@ func (s *registerService) Register(ctx context.Context, poolData *domain.Config,
 	}
 
 	// save ke dalam database
-	id, errs := saveUserToDatabase(poolData, s.repo, data)
+	id, errs := saveUserToDatabase(ctx, poolData, s.repo, data)
 	if errs.Code != 0 {
 		err = errs
 		return
@@ -72,7 +72,7 @@ func (s *registerService) Register(ctx context.Context, poolData *domain.Config,
 	data.Id = id
 	result = data
 	// Send Email ke user
-	go sendEmail(poolData, data.Email, data.FullName, otp)
+	go sendEmail(ctx, poolData, data.Email, data.FullName, otp)
 
 	return
 }
@@ -109,7 +109,7 @@ func (s *registerService) VerifyOTP(ctx context.Context, poolData *domain.Config
 		1,
 	}
 
-	err = updateDataUser(poolData, s.repo, key, value, keyUpdate, valueUpdate)
+	err = updateDataUser(ctx, poolData, s.repo, key, value, keyUpdate, valueUpdate)
 	if err.Code != 0 {
 		return
 	}
@@ -130,7 +130,7 @@ func (s *registerService) ResendOtp(ctx context.Context, poolData *domain.Config
 		return
 	}
 
-	result, errs := checkUserExist(poolData, s.repo, "email", email)
+	result, errs := checkUserExist(ctx, poolData, s.repo, "email", email)
 	if errs.Code != 0 && result.Id == 0 {
 		err = errs
 		return
@@ -149,6 +149,6 @@ func (s *registerService) ResendOtp(ctx context.Context, poolData *domain.Config
 		return
 	}
 
-	go sendEmail(poolData, email, fullName, otp)
+	go sendEmail(ctx, poolData, email, fullName, otp)
 	return
 }

@@ -19,7 +19,7 @@ import (
 	"github.com/alfisar/jastip-import/helpers/helper"
 )
 
-func validateUser(poolData *domain.Config, repo repository.UserContractRepository, data domain.User) (err domain.ErrorData) {
+func validateUser(ctx context.Context, poolData *domain.Config, repo repository.UserContractRepository, data domain.User) (err domain.ErrorData) {
 	var wg sync.WaitGroup
 	defer handler.PanicError()
 
@@ -27,14 +27,14 @@ func validateUser(poolData *domain.Config, repo repository.UserContractRepositor
 	wg.Add(2)
 	go func() {
 		defer wg.Done()
-		_, err := checkUserExist(poolData, repo, "email", data.Email)
+		_, err := checkUserExist(ctx, poolData, repo, "email", data.Email)
 		errChan <- err
 
 	}()
 
 	go func() {
 		defer wg.Done()
-		_, err := checkUserExist(poolData, repo, "nohp", data.NoHP)
+		_, err := checkUserExist(ctx, poolData, repo, "nohp", data.NoHP)
 		errChan <- err
 	}()
 
@@ -50,14 +50,14 @@ func validateUser(poolData *domain.Config, repo repository.UserContractRepositor
 	return
 }
 
-func checkUserExist(poolData *domain.Config, repo repository.UserContractRepository, field string, value string) (result domain.User, err domain.ErrorData) {
+func checkUserExist(ctx context.Context, poolData *domain.Config, repo repository.UserContractRepository, field string, value string) (result domain.User, err domain.ErrorData) {
 	defer handler.PanicError()
 	errData := errors.New("")
 	where := map[string]any{
 		field: value,
 	}
 
-	result, errData = repo.Get(poolData.DBSql, where)
+	result, errData = repo.Get(ctx, poolData.DBSql, where)
 	if errData != nil && errData.Error() != "get users error : record not found" {
 		return result, errorhandler.ErrGetData(errData)
 
@@ -73,10 +73,10 @@ func checkUserExist(poolData *domain.Config, repo repository.UserContractReposit
 	return
 }
 
-func saveUserToDatabase(poolData *domain.Config, repo repository.UserContractRepository, data domain.User) (id int, err domain.ErrorData) {
+func saveUserToDatabase(ctx context.Context, poolData *domain.Config, repo repository.UserContractRepository, data domain.User) (id int, err domain.ErrorData) {
 	defer handler.PanicError()
 
-	id, errData := repo.Create(poolData.DBSql, data)
+	id, errData := repo.Create(ctx, poolData.DBSql, data)
 	if errData != nil {
 		message := fmt.Sprintf("Error save data to DB on func registration and func SaveUserToDatabase : %s", errData.Error())
 		log.Println(message)
@@ -109,7 +109,7 @@ func generateAndSaveOTP(ctx context.Context, poolData *domain.Config, repo repoR
 	return
 }
 
-func sendEmail(poolData *domain.Config, email string, fullName string, otp string) {
+func sendEmail(ctx context.Context, poolData *domain.Config, email string, fullName string, otp string) {
 
 	smptp := domain.SMTP{
 		Host:   poolData.SMTP.Host,
@@ -150,7 +150,7 @@ func validateOtp(ctx context.Context, poolData *domain.Config, repo repoRedis.Re
 	return
 }
 
-func updateDataUser(poolData *domain.Config, repo repository.UserContractRepository, key []string, value []any, keyUpdate []string, valueUpdate []any) (err domain.ErrorData) {
+func updateDataUser(ctx context.Context, poolData *domain.Config, repo repository.UserContractRepository, key []string, value []any, keyUpdate []string, valueUpdate []any) (err domain.ErrorData) {
 	defer handler.PanicError()
 
 	where := map[string]any{}
@@ -163,7 +163,7 @@ func updateDataUser(poolData *domain.Config, repo repository.UserContractReposit
 		updates[v] = valueUpdate[i]
 	}
 
-	errData := repo.Update(poolData.DBSql, where, updates)
+	errData := repo.Update(ctx, poolData.DBSql, where, updates)
 	if errData != nil {
 		message := fmt.Sprintf("Failed update data on func verify otp and func UpdateDataUser : %s", errData.Error())
 		log.Println(message)

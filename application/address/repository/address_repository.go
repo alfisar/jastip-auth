@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/alfisar/jastip-import/domain"
@@ -16,7 +17,7 @@ func NewAddressRepository() *addressRepository {
 	return &addressRepository{}
 }
 
-func (r *addressRepository) Insert(conn *gorm.DB, data domain.AddressRequest) (err error) {
+func (r *addressRepository) Insert(ctx context.Context, conn *gorm.DB, data domain.AddressRequest) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf(fmt.Sprintf("%s", r))
@@ -30,7 +31,7 @@ func (r *addressRepository) Insert(conn *gorm.DB, data domain.AddressRequest) (e
 		return
 	}
 
-	err = conn.Debug().Table("address").Create(&data).Error
+	err = conn.WithContext(ctx).Debug().Table("address").Create(&data).Error
 	if err != nil {
 		err = fmt.Errorf("insert address error : %w", err)
 		return
@@ -39,7 +40,7 @@ func (r *addressRepository) Insert(conn *gorm.DB, data domain.AddressRequest) (e
 	return
 }
 
-func (r *addressRepository) Save(conn *gorm.DB, data domain.AddressRequest) (err error) {
+func (r *addressRepository) Save(ctx context.Context, conn *gorm.DB, data domain.AddressRequest) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf(fmt.Sprintf("%s", r))
@@ -53,7 +54,7 @@ func (r *addressRepository) Save(conn *gorm.DB, data domain.AddressRequest) (err
 		return
 	}
 
-	err = conn.Debug().Table("address").Save(&data).Error
+	err = conn.WithContext(ctx).Debug().Table("address").Save(&data).Error
 	if err != nil {
 		err = fmt.Errorf("save address error : %w", err)
 		return
@@ -62,7 +63,7 @@ func (r *addressRepository) Save(conn *gorm.DB, data domain.AddressRequest) (err
 	return
 }
 
-func (r *addressRepository) Get(conn *gorm.DB, where map[string]any) (result domain.AddressResponse, err error) {
+func (r *addressRepository) Get(ctx context.Context, conn *gorm.DB, where map[string]any) (result domain.AddressResponse, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf(fmt.Sprintf("%s", r))
@@ -76,7 +77,7 @@ func (r *addressRepository) Get(conn *gorm.DB, where map[string]any) (result dom
 		return
 	}
 
-	err = conn.Debug().Table("address").Where(where).First(&result).Error
+	err = conn.WithContext(ctx).Debug().Table("address").Where(where).First(&result).Error
 	if err != nil {
 		err = fmt.Errorf("get address error : %w", err)
 		return
@@ -85,7 +86,7 @@ func (r *addressRepository) Get(conn *gorm.DB, where map[string]any) (result dom
 	return
 }
 
-func (r *addressRepository) GetAll(conn *gorm.DB, where map[string]any) (result []domain.AddressResponse, err error) {
+func (r *addressRepository) GetAll(ctx context.Context, conn *gorm.DB, where map[string]any) (result []domain.AddressResponse, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf(fmt.Sprintf("%s", r))
@@ -99,7 +100,7 @@ func (r *addressRepository) GetAll(conn *gorm.DB, where map[string]any) (result 
 		return
 	}
 
-	err = conn.Debug().Table("address").Where(where).First(&result).Error
+	err = conn.WithContext(ctx).Debug().Table("address").Where(where).Find(&result).Error
 	if err != nil {
 		err = fmt.Errorf("get all address error : %w", err)
 		return
@@ -108,7 +109,7 @@ func (r *addressRepository) GetAll(conn *gorm.DB, where map[string]any) (result 
 	return
 }
 
-func (r *addressRepository) Update(conn *gorm.DB, where map[string]any, updates map[string]any) (err error) {
+func (r *addressRepository) Update(ctx context.Context, conn *gorm.DB, where map[string]any, updates map[string]any) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf(fmt.Sprintf("%s", r))
@@ -122,7 +123,7 @@ func (r *addressRepository) Update(conn *gorm.DB, where map[string]any, updates 
 		return
 	}
 
-	data := conn.Debug().Table("address").Where(where).Updates(updates)
+	data := conn.WithContext(ctx).Debug().Table("address").Where(where).Updates(updates)
 
 	if data.Error != nil {
 		err = fmt.Errorf("Update user error : %w", err)

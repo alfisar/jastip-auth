@@ -12,4 +12,5 @@ type ProfileServiceContract interface {
 	GetAddress(ctx context.Context, poolData *domain.Config, id int, userId int) (result domain.AddressResponse, err domain.ErrorData)
 	GetAllAddress(ctx context.Context, poolData *domain.Config, userId int) (result []domain.AddressResponse, err domain.ErrorData)
 	SaveAddress(ctx context.Context, poolData *domain.Config, userID int, data map[string]any) (err domain.ErrorData)
+	UpdateAddress(ctx context.Context, poolData *domain.Config, id int, userID int, data map[string]any) (err domain.ErrorData)
 }

@@ -30,7 +30,7 @@ func (s *profileService) Get(ctx context.Context, poolData *domain.Config, userI
 		"id": userID,
 	}
 
-	dataUser, errData := s.repo.Get(poolData.DBSql, where)
+	dataUser, errData := s.repo.Get(ctx, poolData.DBSql, where)
 	if errData != nil && errData.Error() != "get users error : "+gorm.ErrRecordNotFound.Error() {
 		err = errorhandler.ErrRecordNotFound()
 		return
@@ -59,7 +59,7 @@ func (s *profileService) Update(ctx context.Context, poolData *domain.Config, us
 		"id": userId,
 	}
 
-	errData := s.repo.Update(poolData.DBSql, where, data)
+	errData := s.repo.Update(ctx, poolData.DBSql, where, data)
 	if errData != nil {
 		err = errorhandler.ErrUpdateData(errData)
 		return
@@ -91,6 +91,32 @@ func (s *profileService) GetAddress(ctx context.Context, poolData *domain.Config
 }
 
 func (s *profileService) SaveAddress(ctx context.Context, poolData *domain.Config, userID int, data map[string]any) (err domain.ErrorData) {
-	err = inserSaveAddress(ctx, poolData, userID, s.repoAddress, data)
+	data["user_id"] = userID
+	req, errs := mapToStruct(data)
+	if errs.Code != 0 {
+		err = errs
+		return
+	}
+
+	errData := s.repoAddress.Insert(ctx, poolData.DBSql, req)
+	if errData != nil {
+		err = errorhandler.ErrInsertData(errData)
+		return
+	}
+
+	return
+}
+
+func (s *profileService) UpdateAddress(ctx context.Context, poolData *domain.Config, id int, userID int, data map[string]any) (err domain.ErrorData) {
+	where := map[string]any{
+		"user_id": userID,
+		"id":      id,
+	}
+
+	errData := s.repoAddress.Update(ctx, poolData.DBSql, where, data)
+	if errData != nil {
+		err = errorhandler.ErrUpdateData(errData)
+		return
+	}
 	return
 }

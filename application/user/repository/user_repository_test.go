@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"testing"
 
 	"github.com/alfisar/jastip-import/config"
@@ -13,6 +14,7 @@ import (
 var (
 	poolData *domain.Config
 	repo     = NewUserRpository()
+	ctx      = context.Background()
 )
 
 func TestInsert(t *testing.T) {
@@ -27,7 +29,7 @@ func TestInsert(t *testing.T) {
 		Status:   0,
 		Username: "alfisar",
 	}
-	_, err := repo.Create(poolData.DBSql, data)
+	_, err := repo.Create(ctx, poolData.DBSql, data)
 	require.Nil(t, err)
 
 }
@@ -36,7 +38,7 @@ func TestGet(t *testing.T) {
 	where := map[string]interface{}{
 		"email": "alfisarrachman@gmail.com",
 	}
-	_, err := repo.Get(poolData.DBSql, where)
+	_, err := repo.Get(ctx, poolData.DBSql, where)
 	require.Nil(t, err)
 
 }
@@ -44,7 +46,7 @@ func TestGetFaileUser(t *testing.T) {
 	where := map[string]interface{}{
 		"email": "alfisarrachma1n@gmail.com",
 	}
-	_, err := repo.Get(poolData.DBSql, where)
+	_, err := repo.Get(ctx, poolData.DBSql, where)
 	require.NotNil(t, err)
 
 }
@@ -59,7 +61,7 @@ func TestInsertFailed(t *testing.T) {
 		Username: "alfisar",
 	}
 	poolData.DBSql = nil
-	_, err := repo.Create(poolData.DBSql, data)
+	_, err := repo.Create(ctx, poolData.DBSql, data)
 	require.NotNil(t, err)
 
 }
@@ -68,7 +70,7 @@ func TestGetFailed(t *testing.T) {
 		"email": "alfisarrachman1@gmail.com",
 	}
 	poolData.DBSql = nil
-	_, err := repo.Get(poolData.DBSql, where)
+	_, err := repo.Get(ctx, poolData.DBSql, where)
 	require.NotNil(t, err)
 
 }

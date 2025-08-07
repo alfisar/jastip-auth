@@ -116,6 +116,37 @@ func (c *profileController) SaveAddress(ctx *fiber.Ctx) error {
 	return nil
 }
 
+func (c *profileController) UpdateAddress(ctx *fiber.Ctx) error {
+	poolData := c.InitPoolData()
+	userID := ctx.Locals("data").(float64)
+	request := ctx.Locals("validatedData").(map[string]any)
+
+	id := ctx.Params("id")
+	if id == "" {
+		err := errorhandler.ErrValidation(nil)
+		response.WriteResponse(ctx, response.Response{}, err, err.HTTPCode)
+		return nil
+	}
+
+	dataId, errs := strconv.Atoi(id)
+	if errs != nil {
+		err := errorhandler.ErrValidation(errs)
+		response.WriteResponse(ctx, response.Response{}, err, err.HTTPCode)
+		return nil
+	}
+
+	err := c.serv.UpdateAddress(ctx.Context(), poolData, dataId, int(userID), request)
+	if err.Code != 0 {
+		response.WriteResponse(ctx, response.Response{}, err, err.HTTPCode)
+		return nil
+	}
+
+	resp := response.ResponseSuccess(nil, consts.SuccessUpdateData)
+	response.WriteResponse(ctx, resp, err, err.Code)
+	return nil
+}
+
+// Test Grpc
 func (c *profileController) GetAddrGrpc(ctx *fiber.Ctx) error {
 	userID := ctx.Locals("data").(float64)
 	id := ctx.Params("id")
