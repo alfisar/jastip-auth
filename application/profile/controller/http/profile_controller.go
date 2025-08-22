@@ -186,7 +186,7 @@ func (c *profileController) GetAddrGrpc(ctx *fiber.Ctx) error {
 		Street:      res.Street,
 		City:        res.City,
 		District:    res.District,
-		SUbDistrict: res.SUbDistrict,
+		SUbDistrict: res.SubDistrict,
 		PostalCode:  res.PostalCode,
 	}
 

@@ -34,13 +34,15 @@ func (c *ProfileGrpcController) AddressByID(ctx context.Context, data *authpb.Re
 	}
 
 	result = &authpb.ResponseAddressByID{
-		Id:          int32(resultAddr.Id),
-		Province:    resultAddr.Province,
-		Street:      resultAddr.Street,
-		City:        resultAddr.City,
-		District:    resultAddr.District,
-		SUbDistrict: resultAddr.SUbDistrict,
-		PostalCode:  resultAddr.SUbDistrict,
+		Id:            int32(resultAddr.Id),
+		Province:      resultAddr.Province,
+		Street:        resultAddr.Street,
+		City:          resultAddr.City,
+		District:      resultAddr.District,
+		SubDistrict:   resultAddr.SUbDistrict,
+		PostalCode:    resultAddr.PostalCode,
+		ReceiverName:  resultAddr.ReceiverName,
+		ReceiverPhone: resultAddr.ReceiverPhone,
 	}
 
 	return
