@@ -6,6 +6,8 @@ github.com/alfisar/jastip-import v0.0.0-20250822021052-b9c4d562c95b h1:/eRd3m19X
 github.com/alfisar/jastip-import v0.0.0-20250822021052-b9c4d562c95b/go.mod h1:6NjR5lHkauWMBSY4q/LHkr9WL9fxwamGlVbS+K9pqEs=
 github.com/alfisar/jastip-import v0.0.0-20250822074152-090fd497cffc h1:ufds4fZGMgJ/+PH+ElewJxZFUThx9eDTeJ4jyfaJ2TY=
 github.com/alfisar/jastip-import v0.0.0-20250822074152-090fd497cffc/go.mod h1:6NjR5lHkauWMBSY4q/LHkr9WL9fxwamGlVbS+K9pqEs=
+github.com/alfisar/jastip-import v0.0.0-20250822091441-e09345a25269 h1:H4hbyN0Xplqgv5w5kh2ay+PJ/Z+Dai9YzUf/z8VfBtk=
+github.com/alfisar/jastip-import v0.0.0-20250822091441-e09345a25269/go.mod h1:6NjR5lHkauWMBSY4q/LHkr9WL9fxwamGlVbS+K9pqEs=
 github.com/andybalholm/brotli v1.1.1 h1:PR2pgnyFznKEugtsUo0xLdDop5SKXd5Qf5ysW+7XdTA=
 github.com/andybalholm/brotli v1.1.1/go.mod h1:05ib4cKhjx3OQYUY22hTVd34Bc8upXjOLL2rKwwZBoA=
 github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 h1:DklsrG3dyBCFEj5IhUbnKptjxatkF07cF2ak3yi77so=
