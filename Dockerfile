@@ -1,4 +1,4 @@
-FROM golang:1.20.0-buster
+FROM golang:1.20.0-bullseye
 
 RUN mkdir -p /go/src/jastip
 
